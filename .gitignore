@@ -1,0 +1,11 @@
+/packages/
+.vs/
+bin/
+obj/
+TestResults/
+Benchmark.*
+BenchmarkDotNet.*
+*~
+*.user
+*.userprefs
+*.suo
