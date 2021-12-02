@@ -3,6 +3,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using NUnit.Framework;
+    using Covariance;
 
     [TestFixture]
     public class TaskTest
@@ -68,6 +69,23 @@
         public async ITask YieldITask(bool continueOnCapturedContext)
         {
             await Yield().AsITask().ConfigureAwait(continueOnCapturedContext);
+        }
+
+        [Test]
+        public async ITask Covariance()
+        {
+            ILineReader<ILine> reader = new LineExtendedReader();
+            ILine line = await reader.GetLineAsync();
+            Assert.That(line.Text, Is.EqualTo("Line"));
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public async ITask Covariance(bool continueOnCapturedContext)
+        {
+            ILineReader<ILine> reader = new LineExtendedReader();
+            ILine line = await reader.GetLineAsync().ConfigureAwait(continueOnCapturedContext);
+            Assert.That(line.Text, Is.EqualTo("Line"));
         }
     }
 }

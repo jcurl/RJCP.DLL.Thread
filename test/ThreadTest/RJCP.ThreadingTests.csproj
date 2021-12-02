@@ -46,6 +46,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Tasks\Covariance\ILine.cs" />
+    <Compile Include="Tasks\Covariance\ILineReader.cs" />
+    <Compile Include="Tasks\Covariance\Line.cs" />
+    <Compile Include="Tasks\Covariance\LineExtended.cs" />
+    <Compile Include="Tasks\Covariance\LineExtendedReader.cs" />
+    <Compile Include="Tasks\Covariance\LineReader.cs" />
     <Compile Include="Tasks\TaskTest.cs" />
   </ItemGroup>
 

@@ -16,5 +16,15 @@
         {
             return new Wrapper.TaskWrapper(task);
         }
+
+        /// <summary>
+        /// Gets the <see cref="Task{TResult}"/> as an <see cref="ITask{TResult}"/> object.
+        /// </summary>
+        /// <param name="task">The task to return.</param>
+        /// <returns>An <see cref="ITask{TResult}"/> that can be awaited on.</returns>
+        public static ITask<TResult> AsITask<TResult>(this Task<TResult> task)
+        {
+            return new Wrapper.TaskWrapper<TResult>(task);
+        }
     }
 }

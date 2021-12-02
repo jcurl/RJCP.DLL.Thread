@@ -45,14 +45,22 @@
 
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Runtime\CompilerServices\AsyncITaskMethodBuilder`T.cs" />
     <Compile Include="Runtime\CompilerServices\AsyncITaskMethodBuilder.cs" />
+    <Compile Include="Tasks\IConfiguredTaskAwaitable`T.cs" />
     <Compile Include="Tasks\IConfiguredTaskAwaitable.cs" />
+    <Compile Include="Tasks\ITaskAwaiter`T.cs" />
+    <Compile Include="Tasks\ITask`T.cs" />
     <Compile Include="Tasks\ITask.cs" />
     <Compile Include="Tasks\ITaskAwaiter.cs" />
     <Compile Include="Tasks\TaskExtensions.cs" />
+    <Compile Include="Tasks\Wrapper\ConfiguredTaskAwaitableWrapper`T.cs" />
     <Compile Include="Tasks\Wrapper\ConfiguredTaskAwaitableWrapper.cs" />
+    <Compile Include="Tasks\Wrapper\ConfiguredTaskAwaiterWrapper`T.cs" />
     <Compile Include="Tasks\Wrapper\ConfiguredTaskAwaiterWrapper.cs" />
+    <Compile Include="Tasks\Wrapper\TaskAwaiterWrapper`T.cs" />
     <Compile Include="Tasks\Wrapper\TaskAwaiterWrapper.cs" />
+    <Compile Include="Tasks\Wrapper\TaskWrapper`T.cs" />
     <Compile Include="Tasks\Wrapper\TaskWrapper.cs" />
   </ItemGroup>
 
