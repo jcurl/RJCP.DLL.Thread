@@ -54,6 +54,7 @@
     <Compile Include="Tasks\ITask.cs" />
     <Compile Include="Tasks\ITaskAwaiter.cs" />
     <Compile Include="Tasks\TaskExtensions.cs" />
+    <Compile Include="Tasks\TaskGroup.cs" />
     <Compile Include="Tasks\Wrapper\ConfiguredTaskAwaitableWrapper`T.cs" />
     <Compile Include="Tasks\Wrapper\ConfiguredTaskAwaitableWrapper.cs" />
     <Compile Include="Tasks\Wrapper\ConfiguredTaskAwaiterWrapper`T.cs" />
