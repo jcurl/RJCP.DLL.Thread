@@ -46,6 +46,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="RJCP.MSBuildTasks" Version="0.2.3">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="Tasks\Covariance\ILine.cs" />
     <Compile Include="Tasks\Covariance\ILineReader.cs" />
     <Compile Include="Tasks\Covariance\Line.cs" />
