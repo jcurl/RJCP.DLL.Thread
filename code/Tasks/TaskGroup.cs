@@ -28,9 +28,7 @@
             lock (m_GroupLock) {
                 if (m_CompleteSource.Task.IsCompleted) return false;
 
-                if (!m_TaskGroup.Contains(task)) {
-                    m_TaskGroup.Add(task);
-                }
+                m_TaskGroup.Add(task);
             }
 
             // We don't await, as we want this to continue running in parallel. We don't need the task, as this method
@@ -62,9 +60,7 @@
                 // By getting the task within 'm_GroupLock', we're sure already that we can't be completed at this point
                 // in time. Even if a task does complete, the `m_TaskGroup` won't be empty.
                 task = taskFunc();
-                if (!m_TaskGroup.Contains(task)) {
-                    m_TaskGroup.Add(task);
-                }
+                m_TaskGroup.Add(task);
             }
 
             // We don't await, as we want this to continue running in parallel. We don't need the task, as this method
@@ -135,7 +131,7 @@
 
         private static readonly EmptyTaskList EmptyTasks = new EmptyTaskList();
 
-        private sealed class EmptyTaskList : IEnumerator<Task>
+        private readonly struct EmptyTaskList : IEnumerator<Task>
         {
             public Task Current { get { return null; } }
 
