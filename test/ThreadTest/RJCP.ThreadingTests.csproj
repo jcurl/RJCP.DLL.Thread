@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net60</TargetFrameworks>
     <OutputType>Library</OutputType>
     <IsPackable>false</IsPackable>
     <Configurations>Debug;Release</Configurations>
@@ -14,7 +12,7 @@
     <RootNamespace>RJCP.Threading</RootNamespace>
 
     <Authors>Jason Curl</Authors>
-    <Copyright>(C) 2021-2023, Jason Curl</Copyright>
+    <Copyright>(C) 2021-2024, Jason Curl</Copyright>
     <Company></Company>
     <Description>Test harness for RJCP.Threading Assembly.</Description>
     <Version>1.0.0</Version>
@@ -26,12 +24,12 @@
     <EnableDefaultItems>false</EnableDefaultItems>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug'">
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release'">
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
   </PropertyGroup>
@@ -43,11 +41,8 @@
     <PackageReference Include="NUnit.ConsoleRunner" Version="3.16.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
     <PackageReference Include="CSharpIsNullAnalyzer" Version="0.1.492" PrivateAssets="all" />
-    <ProjectReference Include="..\..\code\RJCP.Threading.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="RJCP.MSBuildTasks" Version="0.2.4" PrivateAssets="all" />
+    <ProjectReference Include="..\..\code\RJCP.Threading.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,5 +55,4 @@
     <Compile Include="Tasks\TaskGroupTest.cs" />
     <Compile Include="Tasks\TaskTest.cs" />
   </ItemGroup>
-
 </Project>
