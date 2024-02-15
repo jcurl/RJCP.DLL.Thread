@@ -28,7 +28,7 @@
         [Test]
         public void DefaultTaskGroup()
         {
-            TaskGroup group = new TaskGroup();
+            TaskGroup group = new();
             Assert.That(group.WaitAll().IsCompleted, Is.False);
         }
 
@@ -57,9 +57,9 @@
         [Test]
         public async Task AddSingleTask()
         {
-            TaskGroup group = new TaskGroup();
+            TaskGroup group = new();
 
-            using (ManualResetEventSlim signal = new ManualResetEventSlim(false)) {
+            using (ManualResetEventSlim signal = new(false)) {
                 Task sigTask = null;
                 if (m_UsageType == UsageType.Direct) {
                     sigTask = WaitForEvent("sigTask", signal);
@@ -88,10 +88,10 @@
         [Test]
         public async Task AddTasks()
         {
-            TaskGroup group = new TaskGroup();
+            TaskGroup group = new();
 
-            using (ManualResetEventSlim signal1 = new ManualResetEventSlim(false))
-            using (ManualResetEventSlim signal2 = new ManualResetEventSlim(false)) {
+            using (ManualResetEventSlim signal1 = new(false))
+            using (ManualResetEventSlim signal2 = new(false)) {
                 Task sigTask1 = null;
                 Task sigTask2 = null;
                 if (m_UsageType == UsageType.Direct) {
@@ -128,10 +128,10 @@
         [Test]
         public async Task AddTaskWhileWaiting()
         {
-            TaskGroup group = new TaskGroup();
+            TaskGroup group = new();
 
-            using (ManualResetEventSlim signal1 = new ManualResetEventSlim(false))
-            using (ManualResetEventSlim signal2 = new ManualResetEventSlim(false)) {
+            using (ManualResetEventSlim signal1 = new(false))
+            using (ManualResetEventSlim signal2 = new(false)) {
                 Task sigTask1 = null;
                 if (m_UsageType == UsageType.Direct) {
                     sigTask1 = WaitForEvent("sigTask", signal1);
@@ -177,9 +177,9 @@
         [Test]
         public async Task AddWhenComplete()
         {
-            TaskGroup group = new TaskGroup();
+            TaskGroup group = new();
 
-            using (ManualResetEventSlim signal = new ManualResetEventSlim(false)) {
+            using (ManualResetEventSlim signal = new(false)) {
                 Task sigTask = null;
                 if (m_UsageType == UsageType.Direct) {
                     sigTask = WaitForEvent("sigTask", signal);
@@ -220,10 +220,10 @@
         [TestCase(EventAction.Exception)]
         public async Task AddTasksWithError(EventAction action)
         {
-            TaskGroup group = new TaskGroup();
+            TaskGroup group = new();
 
-            using (ManualResetEventSlim signal1 = new ManualResetEventSlim(false))
-            using (ManualResetEventSlim signal2 = new ManualResetEventSlim(false)) {
+            using (ManualResetEventSlim signal1 = new(false))
+            using (ManualResetEventSlim signal2 = new(false)) {
                 Task sigTask1 = null;
                 Task sigTask2 = null;
                 if (m_UsageType == UsageType.Direct) {

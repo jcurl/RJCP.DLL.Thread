@@ -54,7 +54,7 @@
         [TestCase(true)]
         public async ITask ThreadSleepITask(bool continueOnCapturedContext)
         {
-            TaskFactory tf = new TaskFactory();
+            TaskFactory tf = new();
             await tf.StartNew(() => { Thread.Sleep(1); }).AsITask().ConfigureAwait(continueOnCapturedContext);
         }
 

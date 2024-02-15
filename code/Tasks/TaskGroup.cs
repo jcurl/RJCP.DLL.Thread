@@ -10,10 +10,10 @@
     /// </summary>
     public class TaskGroup : IEnumerable<Task>
     {
-        private readonly object m_GroupLock = new object();
-        private readonly HashSet<Task> m_TaskGroup = new HashSet<Task>();
+        private readonly object m_GroupLock = new();
+        private readonly HashSet<Task> m_TaskGroup = new();
         private readonly TaskCompletionSource<int> m_CompleteSource =
-            new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
+            new(TaskCreationOptions.RunContinuationsAsynchronously);
 
         /// <summary>
         /// Registers the task that is added to the list of tasks that should complete.
@@ -129,7 +129,7 @@
             await m_CompleteSource.Task.ConfigureAwait(false);
         }
 
-        private static readonly EmptyTaskList EmptyTasks = new EmptyTaskList();
+        private static readonly EmptyTaskList EmptyTasks = new();
 
         private readonly struct EmptyTaskList : IEnumerator<Task>
         {
