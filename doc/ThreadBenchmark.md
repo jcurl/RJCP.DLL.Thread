@@ -21,14 +21,14 @@ $ git rj perf thread
 ## Results
 
 ```text
-Results = netcore31
+Results = netcore
 
-BenchmarkDotNet=v0.13.12 OS=Windows 10 (10.0.19045.3803/22H2/2022Update)
+BenchmarkDotNet=v0.13.12 OS=Windows 10 (10.0.19045.3930/22H2/2022Update)
 Intel Core i7-6700T CPU 2.80GHz (Skylake), 1 CPU(s), 8 logical and 4 physical core(s)
-  [HOST] : .NET Core 3.1.32 (CoreCLR 4.700.22.55902, CoreFX 4.700.22.56512), X64 RyuJIT
+  [HOST] : .NET 6.0.26 (6.0.2623.60508), X64 RyuJIT
 ```
 
-| Project 'thread' Type | Method         | mean (netcore31) | stderr |
-|:----------------------|:---------------|-----------------:|-------:|
-| ITaskBenchmark        | CompletedITask | 3.46             | 0.01   |
-| ITaskBenchmark        | CompletedTask  | 0.29             | 0.00   |
+| Project 'thread' Type | Method         | mean (netcore) | stderr |
+|:----------------------|:---------------|---------------:|-------:|
+| ITaskBenchmark        | CompletedITask | 3.81           | 0.01   |
+| ITaskBenchmark        | CompletedTask  | 0.28           | 0.00   |
