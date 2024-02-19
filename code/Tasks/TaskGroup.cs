@@ -12,8 +12,7 @@
     {
         private readonly object m_GroupLock = new();
         private readonly HashSet<Task> m_TaskGroup = new();
-        private readonly TaskCompletionSource<int> m_CompleteSource =
-            new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly TaskCompletionSource<int> m_CompleteSource = new();
 
         /// <summary>
         /// Registers the task that is added to the list of tasks that should complete.
