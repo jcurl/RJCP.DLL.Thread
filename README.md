@@ -1,17 +1,24 @@
-# RJCP Thread Library
+# RJCP Thread Library <!-- omit in toc -->
 
 The RJCP.Threading library was introduced due to a problem with .NET not having
-an implementation of `ITask<T>` which allows for covariant interfaces. This is
-to support my `RJCP.Diagnostics.Log` library.
+an implementation of `ITask<T>` which allows for covariant interfaces.
 
 It is based on the information by [Extending the Async Methods in
 C#](https://devblogs.microsoft.com/premier-developer/extending-the-async-methods-in-c/).
 
-## Why is this Library needed
+- [1. Why is this Library needed](#1-why-is-this-library-needed)
+- [Features](#features)
+  - [2. Introducing an Interface to allow Covariance](#2-introducing-an-interface-to-allow-covariance)
+  - [Task Group](#task-group)
+- [2. Release History](#2-release-history)
+  - [2.1. Version 0.2.1](#21-version-021)
+  - [2.2. Version 0.2.0](#22-version-020)
+
+## 1. Why is this Library needed
 
 .NET 4.x introduced the `Task<T>` type, which represents operations that can run
 on different contexts that return values at some later point in time. In .NET
-4.5, they keyword `async` and `await` were interoduced that provide an easy to
+4.5, they keyword `async` and `await` were introduced that provide an easy to
 read asynchronous programming model with the language realizing this in the
 background using state machines.
 
@@ -77,9 +84,11 @@ type `T`. It must be `ILineReader<Line>` for the code to compile. But then if
 you have a new class `LineReader2` that has `T : Line2 : ILine`, it can't be
 assigned to `reader` as the types are again incompatible.
 
-## Introducing an Interface to allow Covariance
+## Features
 
-However, with the existance of an interface `ITask`, we can now make the type
+### 2. Introducing an Interface to allow Covariance
+
+However, with the existence of an interface `ITask`, we can now make the type
 `T` covariant, and the method works as expected.
 
 ```csharp
@@ -116,3 +125,33 @@ namespace RJCP.Threading.Tasks {
     }
 }
 ```
+
+Where possible, avoid the usage of the `ITask` as it is slower.
+
+### Task Group
+
+A `TaskGroup` is a simple collection to reduce boiler-plate code when waiting on
+multiple tasks.
+
+Create a `TaskGroup` and `RegisterTask(Task)` to have the task group be able to
+wait on the tasks.
+
+## 2. Release History
+
+### 2.1. Version 0.2.1
+
+Bugfixes:
+
+- TaskGroup: Remove asynchronous behaviour of `TaskCompletionSource` (fails on
+  Linux) (DOTNET-970)
+
+Quality:
+
+- Add README.md reference to NuGet package (DOTNET-815)
+- Tasks: Fix unnecessary guard around HashSet (DOTNET-833)
+- Upgrade from .NET Standard 2.1 to .NET 6.0 (DOTNET-936, DOTNET-941,
+  DOTNET-942)
+
+### 2.2. Version 0.2.0
+
+- Initial Version
