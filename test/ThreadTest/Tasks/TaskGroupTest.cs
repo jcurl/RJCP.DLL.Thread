@@ -9,7 +9,7 @@
 
     [TestFixture(UsageType.Direct)]
     [TestFixture(UsageType.Delegates)]
-    [Timeout(5000)]
+    [CancelAfter(5000)]
     public class TaskGroupTest
     {
         public enum UsageType
@@ -263,7 +263,7 @@
                     throw new NotSupportedException();
                 }
 
-                Assert.That(async () => {
+                await Assert.ThatAsync(async () => {
                     await group.WaitAll();
                 }, constraint);
 
