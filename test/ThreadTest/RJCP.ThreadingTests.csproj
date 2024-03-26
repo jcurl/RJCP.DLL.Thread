@@ -46,6 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Tasks\ConfigureAwaitTest.cs" />
     <Compile Include="Tasks\Covariance\ILine.cs" />
     <Compile Include="Tasks\Covariance\ILineReader.cs" />
     <Compile Include="Tasks\Covariance\Line.cs" />
@@ -54,5 +55,6 @@
     <Compile Include="Tasks\Covariance\LineReader.cs" />
     <Compile Include="Tasks\TaskGroupTest.cs" />
     <Compile Include="Tasks\TaskTest.cs" />
+    <Compile Include="Tasks\TestSynchronisationContext.cs" />
   </ItemGroup>
 </Project>
