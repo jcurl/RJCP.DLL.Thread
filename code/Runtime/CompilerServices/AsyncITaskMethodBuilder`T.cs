@@ -109,6 +109,7 @@
         /// Completes the <see cref="System.Threading.Tasks.Task"/> in the <see cref="TaskStatus">RanToCompletion</see>
         /// state.
         /// </summary>
+        /// <param name="result">The result to use to complete the task.</param>
         /// <exception cref="InvalidOperationException">The builder is not initialized.</exception>
         /// <exception cref="InvalidOperationException">The task has already completed.</exception>
         public void SetResult(TResult result)

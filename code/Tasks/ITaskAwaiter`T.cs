@@ -4,7 +4,10 @@
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
 
-    /// <summary>Awaiter interface for awaiting an <see cref="ITask{TResult}"/>.</summary>
+    /// <summary>
+    /// Awaiter interface for awaiting an <see cref="ITask{TResult}"/>.
+    /// </summary>
+    /// <typeparam name="TResult">The type for the result of the task awaiter.</typeparam>
     /// <remarks>This type is intended for compiler use only.</remarks>
     public interface ITaskAwaiter<out TResult> : ICriticalNotifyCompletion
     {
@@ -15,7 +18,10 @@
         /// <exception cref="NullReferenceException">The awaiter was not properly initialized.</exception>
         bool IsCompleted { get; }
 
-        /// <summary>Ends the await on the completed <see cref="ITask{TResult}"/>.</summary>
+        /// <summary>
+        /// Ends the await on the completed <see cref="ITask{TResult}" />.
+        /// </summary>
+        /// <returns>The resultant object of type <typeparamref name="TResult"/>.</returns>
         /// <exception cref="NullReferenceException">The awaiter was not properly initialized.</exception>
         /// <exception cref="TaskCanceledException">The task was canceled.</exception>
         /// <exception cref="Exception">The task completed in a Faulted state.</exception>

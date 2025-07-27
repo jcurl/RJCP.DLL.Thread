@@ -119,6 +119,7 @@
         /// <summary>
         /// Waits for all registered tasks to complete.
         /// </summary>
+        /// <returns>The task to await on for completion.</returns>
         /// <remarks>
         /// Tasks can be added while waiting and they're added to the wait list. If a task is added after all previous
         /// tasks have completed, it will <b>not</b> reset the wait list.

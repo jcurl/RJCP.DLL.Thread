@@ -20,6 +20,7 @@
         /// <summary>
         /// Gets the <see cref="Task{TResult}"/> as an <see cref="ITask{TResult}"/> object.
         /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="task">The task to return.</param>
         /// <returns>An <see cref="ITask{TResult}"/> that can be awaited on.</returns>
         public static ITask<TResult> AsITask<TResult>(this Task<TResult> task)
