@@ -6,15 +6,24 @@ an implementation of `ITask<T>` which allows for covariant interfaces.
 It is based on the information by [Extending the Async Methods in
 C#](https://devblogs.microsoft.com/premier-developer/extending-the-async-methods-in-c/).
 
-- [1. Why is this Library needed](#1-why-is-this-library-needed)
-- [Features](#features)
-  - [2. Introducing an Interface to allow Covariance](#2-introducing-an-interface-to-allow-covariance)
-  - [Task Group](#task-group)
+- [1. Features](#1-features)
+  - [1.1. Task Interface](#11-task-interface)
+    - [1.1.1. Why is this needed](#111-why-is-this-needed)
+    - [1.1.2. Introducing an Interface to allow Covariance](#112-introducing-an-interface-to-allow-covariance)
+  - [1.2. Task Group](#12-task-group)
+  - [1.3. Processes](#13-processes)
+    - [1.3.1. Unit Testing](#131-unit-testing)
+    - [1.3.2. Conclusion](#132-conclusion)
 - [2. Release History](#2-release-history)
-  - [2.1. Version 0.2.1](#21-version-021)
-  - [2.2. Version 0.2.0](#22-version-020)
+  - [2.1. Version 0.3.0](#21-version-030)
+  - [2.2. Version 0.2.1](#22-version-021)
+  - [2.3. Version 0.2.0](#23-version-020)
 
-## 1. Why is this Library needed
+## 1. Features
+
+### 1.1. Task Interface
+
+#### 1.1.1. Why is this needed
 
 .NET 4.x introduced the `Task<T>` type, which represents operations that can run
 on different contexts that return values at some later point in time. In .NET
@@ -84,9 +93,7 @@ type `T`. It must be `ILineReader<Line>` for the code to compile. But then if
 you have a new class `LineReader2` that has `T : Line2 : ILine`, it can't be
 assigned to `reader` as the types are again incompatible.
 
-## Features
-
-### 2. Introducing an Interface to allow Covariance
+#### 1.1.2. Introducing an Interface to allow Covariance
 
 However, with the existence of an interface `ITask`, we can now make the type
 `T` covariant, and the method works as expected.
@@ -128,7 +135,7 @@ namespace RJCP.Threading.Tasks {
 
 Where possible, avoid the usage of the `ITask` as it is slower.
 
-### Task Group
+### 1.2. Task Group
 
 A `TaskGroup` is a simple collection to reduce boiler-plate code when waiting on
 multiple tasks.
@@ -136,9 +143,73 @@ multiple tasks.
 Create a `TaskGroup` and `RegisterTask(Task)` to have the task group be able to
 wait on the tasks.
 
+### 1.3. Processes
+
+The core of the functionality is in the `RunProcess` task. The easiest way is to
+create a `RunProcess` class through one of the static methods:
+
+- `Run(string command, params string[] arguments)`
+- `RunFrom(string command, string workDir, params string[] arguments)`
+- `RunAsync(string command, params string[] arguments)`
+- `RunAsync(string command, string[] arguments, CancellationToken token)`
+- `RunFromAsync(string command, string workDir, params string[] arguments)`
+- `RunFromAsync(string command, string workDir, string[] arguments, CancellationToken token)`
+
+The static methods return a `RunProcess` or a `Task<RunProcess>` that can be
+awaited on. The process runs until completion, and then the result is returned.
+
+You can instantiate the class with one of the constructors, and then call
+`Execute` or await with `ExecuteAsync`, which blocks until the process exits.
+You can register to delegates before executing the process to get feedback.
+
+#### 1.3.1. Unit Testing
+
+Through object inheritance, it is possible to construct a `RunProcess` object,
+and pass it to a method that executes the process, by simulation only.
+
+It works by providing your own class and providing a simulation delegate.
+
+```csharp
+internal class GetDirSimProcess : RunProcess
+{
+    private static int GetDirSim(RunProcess process, string command, string arguments, CancellationToken token)
+    {
+        GetDirSimProcess p = (GetDirSimProcess)process;
+
+        p.LogStdOut(" Volume in drive C has no label.");
+        p.LogStdOut(" Volume Serial Number is 3A2G-7Z2W");
+        p.LogStdOut(string.Empty);
+        p.LogStdOut($" Directory of {p.WorkingDirectory}");
+        p.LogStdOut(string.Empty);
+        p.LogStdOut("06/08/2021  18:31    <DIR>          .");
+        p.LogStdOut("06/08/2021  18:31    <DIR>          ..");
+        p.LogStdOut("25/05/2021  17:59            29,048 testhost.dll");
+        p.LogStdOut("25/05/2021  18:00           149,360 testhost.exe");
+        p.LogStdOut("              49 File(s)      6,918,578 bytes");
+        p.LogStdOut("              17 Dir(s)  830,622,584,832 bytes free");
+        return 0;
+    }
+
+    public GetDirSimProcess(string command, string workDir, string arguments)
+        : base(GetDirSim, command, workDir, arguments) { }
+}
+```
+
+#### 1.3.2. Conclusion
+
+It is then possible to create tools that can automatically detect their
+location, and either execute function (like a GIT tool, that embeds in the class
+how to find the git binary, and then the command lines needed to execute).
+
 ## 2. Release History
 
-### 2.1. Version 0.2.1
+### 2.1. Version 0.3.0
+
+Features:
+
+- Process: A wrapper asynchronously handling processes and their output.
+
+### 2.2. Version 0.2.1
 
 Bugfixes:
 
@@ -152,6 +223,6 @@ Quality:
 - Upgrade from .NET Standard 2.1 to .NET 6.0 (DOTNET-936, DOTNET-941,
   DOTNET-942)
 
-### 2.2. Version 0.2.0
+### 2.3. Version 0.2.0
 
 - Initial Version
