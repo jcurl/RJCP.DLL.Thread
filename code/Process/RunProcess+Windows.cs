@@ -133,8 +133,13 @@
                     }
                     if (cmdLine.Length > 0) cmdLine.Append(' ');
                     if (quote) {
+#if NETCOREAPP
                         if (arg[^1] == '\\')
                             escArg.Append('\\');
+#else
+                        if (arg[arg.Length - 1] == '\\')
+                            escArg.Append('\\');
+#endif
                         cmdLine.Append('"').Append(escArg).Append('"');
                     } else {
                         cmdLine.Append(escArg);

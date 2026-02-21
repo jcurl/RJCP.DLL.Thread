@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net462;net6.0;net8.0</TargetFrameworks>
     <OutputType>Library</OutputType>
     <Configurations>Debug;Release</Configurations>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -28,6 +28,7 @@
     <AnalysisLevel>latest</AnalysisLevel>
     <EnableDefaultItems>false</EnableDefaultItems>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <LangVersion Condition="$(TargetFramework.StartsWith('net4'))">10</LangVersion>
 
     <RevisionControl>git</RevisionControl>
     <RevisionControlLabel>release/v$(Version)</RevisionControlLabel>
@@ -44,14 +45,26 @@
     <RevisionControlStrict>true</RevisionControlStrict>
   </PropertyGroup>
 
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="RJCP.MSBuildTasks" Version="0.2.6" PrivateAssets="all" />
     <PackageReference Include="CSharpIsNullAnalyzer" Version="0.1.593" PrivateAssets="all" />
+    <ProjectReference Include="..\..\environment\SysCompat\RJCP.Core.SysCompat.csproj" />
     <ProjectReference Include="..\..\bufferio\BufferIO\RJCP.IO.Buffer.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\Messages.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Messages.resx</DependentUpon>
+    </Compile>
     <Compile Include="Process\ConsoleDataEventArgs.cs" />
     <Compile Include="Process\IProcessWorker.cs" />
     <Compile Include="Process\ProcessSim.cs" />
@@ -60,12 +73,27 @@
     <Compile Include="Process\RunProcess+Windows.cs" />
     <Compile Include="Process\RunProcess.cs" />
     <Compile Include="Process\RunProcessException.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources\Messages.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Messages.resx</DependentUpon>
-    </Compile>
+    <None Include="Runtime\CompilerServices\AsyncITaskMethodBuilder`T.cs" />
+    <None Include="Runtime\CompilerServices\AsyncITaskMethodBuilder.cs" />
+    <None Include="Tasks\IConfiguredTaskAwaitable`T.cs" />
+    <None Include="Tasks\IConfiguredTaskAwaitable.cs" />
+    <None Include="Tasks\ITaskAwaiter`T.cs" />
+    <None Include="Tasks\ITask`T.cs" />
+    <None Include="Tasks\ITask.cs" />
+    <None Include="Tasks\ITaskAwaiter.cs" />
+    <None Include="Tasks\TaskExtensions.cs" />
+    <None Include="Tasks\TaskGroup.cs" />
+    <None Include="Tasks\Wrapper\ConfiguredTaskAwaitableWrapper`T.cs" />
+    <None Include="Tasks\Wrapper\ConfiguredTaskAwaitableWrapper.cs" />
+    <None Include="Tasks\Wrapper\ConfiguredTaskAwaiterWrapper`T.cs" />
+    <None Include="Tasks\Wrapper\ConfiguredTaskAwaiterWrapper.cs" />
+    <None Include="Tasks\Wrapper\TaskAwaiterWrapper`T.cs" />
+    <None Include="Tasks\Wrapper\TaskAwaiterWrapper.cs" />
+    <None Include="Tasks\Wrapper\TaskWrapper`T.cs" />
+    <None Include="Tasks\Wrapper\TaskWrapper.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
     <Compile Include="Runtime\CompilerServices\AsyncITaskMethodBuilder`T.cs" />
     <Compile Include="Runtime\CompilerServices\AsyncITaskMethodBuilder.cs" />
     <Compile Include="Tasks\IConfiguredTaskAwaitable`T.cs" />

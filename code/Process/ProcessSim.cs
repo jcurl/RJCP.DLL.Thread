@@ -15,8 +15,8 @@
 
         public ProcessSim(RunProcess sender, RunProcess.SimAction simulation, string command, string arguments)
         {
-            ArgumentNullException.ThrowIfNull(simulation);
-            ArgumentNullException.ThrowIfNull(sender);
+            ThrowHelper.ThrowIfNull(simulation);
+            ThrowHelper.ThrowIfNull(sender);
 
             m_TokenSource = new CancellationTokenSource();
             m_Sender = sender;

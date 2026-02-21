@@ -11,7 +11,16 @@
     {
         private static string GetTimeoutBinary()
         {
-            return Path.Combine(Deploy.WorkDirectory, "Resources", "stimeout", "x64", "Release", "stimeout.exe");
+            string stimeBinary;
+            if (IntPtr.Size == 4) {
+                stimeBinary = Path.Combine(Deploy.WorkDirectory, "Resources", "stimeout", "x86", "Release", "stimeout.exe");
+            } else {
+                stimeBinary = Path.Combine(Deploy.WorkDirectory, "Resources", "stimeout", "x64", "Release", "stimeout.exe");
+            }
+
+            if (!File.Exists(stimeBinary))
+                throw new FileNotFoundException($"Could not find {stimeBinary}");
+            return stimeBinary;
         }
 
         [Test]

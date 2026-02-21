@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net462;net6.0;net8.0</TargetFrameworks>
     <OutputType>Library</OutputType>
     <IsPackable>false</IsPackable>
     <Configurations>Debug;Release</Configurations>
@@ -12,7 +12,7 @@
     <RootNamespace>RJCP.Threading</RootNamespace>
 
     <Authors>Jason Curl</Authors>
-    <Copyright>(C) 2021-2024, Jason Curl</Copyright>
+    <Copyright>(C) 2021-2026, Jason Curl</Copyright>
     <Company></Company>
     <Description>Test harness for RJCP.Threading Assembly.</Description>
     <Version>1.0.0</Version>
@@ -22,6 +22,7 @@
     <AnalysisMode>Default</AnalysisMode>
     <AnalysisLevel>latest</AnalysisLevel>
     <EnableDefaultItems>false</EnableDefaultItems>
+    <LangVersion Condition="$(TargetFramework.StartsWith('net4'))">10</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
@@ -33,6 +34,11 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
   </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifer)' == '.NETFramework'">
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
@@ -52,6 +58,19 @@
     <Compile Include="Process\RunProcessCmdLineWinTest.cs" />
     <Compile Include="Process\RunProcessTest.cs" />
     <Compile Include="Process\TimeoutSimProcess.cs" />
+    <None Include="Tasks\ConfigureAwaitTest.cs" />
+    <None Include="Tasks\Covariance\ILine.cs" />
+    <None Include="Tasks\Covariance\ILineReader.cs" />
+    <None Include="Tasks\Covariance\Line.cs" />
+    <None Include="Tasks\Covariance\LineExtended.cs" />
+    <None Include="Tasks\Covariance\LineExtendedReader.cs" />
+    <None Include="Tasks\Covariance\LineReader.cs" />
+    <None Include="Tasks\TaskGroupTest.cs" />
+    <None Include="Tasks\TaskTest.cs" />
+    <None Include="Tasks\TestSynchronisationContext.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
     <Compile Include="Tasks\ConfigureAwaitTest.cs" />
     <Compile Include="Tasks\Covariance\ILine.cs" />
     <Compile Include="Tasks\Covariance\ILineReader.cs" />

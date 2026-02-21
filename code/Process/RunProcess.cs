@@ -192,7 +192,7 @@
         /// </example>
         protected RunProcess(SimAction simulation, string command, string workDir, string arguments)
         {
-            ArgumentNullException.ThrowIfNull(simulation);
+            ThrowHelper.ThrowIfNull(simulation);
 
             Initialize(command, workDir, arguments);
             m_Simulation = simulation;

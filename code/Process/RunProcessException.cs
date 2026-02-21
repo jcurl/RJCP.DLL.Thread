@@ -4,15 +4,14 @@
     using System.Collections.Generic;
 #if NETFRAMEWORK
     using System.Runtime.Serialization;
-    using System.Security.Permissions;
 #endif
 
-#if NETFRAMEWORK
-    [Serializable]
-#endif
     /// <summary>
     /// An exception when a process cannot be executed properly.
     /// </summary>
+#if NETFRAMEWORK
+    [Serializable]
+#endif
     public class RunProcessException : Exception
     {
         /// <summary>
@@ -66,6 +65,15 @@
         }
 
 #if NETFRAMEWORK
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RunProcessException"/> class.
+        /// </summary>
+        /// <param name="info">
+        /// The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.
+        /// </param>
+        /// <param name="context">
+        /// The <see cref="StreamingContext"/> that contains contextual information about the source or destination.
+        /// </param>
         protected RunProcessException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             // Deserialize our new property

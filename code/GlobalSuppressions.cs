@@ -5,4 +5,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 
+#if NETCOREAPP
 [assembly: SuppressMessage("Style", "IDE0130:Namespace does not match folder structure", Justification = "System support", Scope = "namespace", Target = "~N:RJCP.Runtime.CompilerServices")]
+#endif
