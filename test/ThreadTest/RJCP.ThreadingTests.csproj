@@ -6,8 +6,8 @@
     <IsPackable>false</IsPackable>
     <Configurations>Debug;Release</Configurations>
 
-    <AssemblyName>RJCP.ThreadingTest</AssemblyName>
-    <AssemblyTitle>RJCP.ThreadingTest</AssemblyTitle>
+    <AssemblyName>RJCP.ThreadingTests</AssemblyName>
+    <AssemblyTitle>RJCP.ThreadingTests</AssemblyTitle>
     <Product>RJCP.Threading</Product>
     <RootNamespace>RJCP.Threading</RootNamespace>
 
@@ -53,10 +53,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Concurrency\AsyncManualResetEventTest.cs" />
+    <Compile Include="Concurrency\AsyncSemaphoreTest.cs" />
+    <Compile Include="Concurrency\AsyncValueTest.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Process\ExecutableTest.cs" />
     <Compile Include="Process\GetDirSimProcess.cs" />
     <Compile Include="Process\RunProcessCmdLineWinTest.cs" />
     <Compile Include="Process\RunProcessTest.cs" />
+    <Compile Include="Process\SleepSimProcess.cs" />
+    <Compile Include="Process\SleepTool.cs" />
+    <Compile Include="Process\SleepToolMock.cs" />
     <Compile Include="Process\TimeoutSimProcess.cs" />
     <None Include="Tasks\ConfigureAwaitTest.cs" />
     <None Include="Tasks\Covariance\ILine.cs" />
@@ -88,6 +95,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\stimeout\x64\Release\stimeout.pdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\stimeout\x86\Release\stimeout.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\stimeout\x86\Release\stimeout.pdb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

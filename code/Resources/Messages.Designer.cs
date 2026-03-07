@@ -61,6 +61,15 @@ namespace RJCP.Threading.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tool {0} not found.
+        /// </summary>
+        internal static string Executable_ToolNotFound {
+            get {
+                return ResourceManager.GetString("Executable_ToolNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid operation: Must first locate the executable.
         /// </summary>
         internal static string Process_ExeNotFound {

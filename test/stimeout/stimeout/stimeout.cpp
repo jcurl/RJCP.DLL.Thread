@@ -9,6 +9,11 @@ auto main(int argc, const char* argv[]) -> int {
     return 1;
   }
 
+  if (strcmp("info", argv[1]) == 0) {
+    std::cout << "stimeout version 1.0" << std::endl;
+    return 0;
+  }
+
   int time;
   try {
     time = std::stoi(argv[1]);

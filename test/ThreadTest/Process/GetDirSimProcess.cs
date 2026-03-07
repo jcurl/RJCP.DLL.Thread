@@ -22,7 +22,7 @@
             return 0;
         }
 
-        public GetDirSimProcess(string command, string workDir, string arguments)
+        public GetDirSimProcess(string command, string workDir, params string[] arguments)
             : base(GetDirSim, command, workDir, arguments) { }
     }
 }

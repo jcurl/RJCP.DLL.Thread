@@ -91,7 +91,7 @@
         public void ProcessSimRunFromAsyncResult()
         {
             string current = Environment.CurrentDirectory;
-            RunProcess process = new GetDirSimProcess("cmd", current, "/c dir");
+            RunProcess process = new GetDirSimProcess("cmd", current, "/c", "dir");
             ProcessRunFromAsyncResult(process);
         }
 
@@ -245,7 +245,7 @@
         public void ProcessSimRunFromGetStdOut()
         {
             string current = Environment.CurrentDirectory;
-            RunProcess process = new GetDirSimProcess("cmd", current, "/c dir");
+            RunProcess process = new GetDirSimProcess("cmd", current, "/c", "dir");
             ProcessRunFromGetStdOut(process);
         }
 
@@ -284,7 +284,7 @@
         public async Task ProcessSimRunFromAsync()
         {
             string current = Environment.CurrentDirectory;
-            RunProcess process = new GetDirSimProcess("cmd", current, "/c dir");
+            RunProcess process = new GetDirSimProcess("cmd", current, "/c", "dir");
             await ProcessRunFromAsync(process);
         }
 
@@ -586,7 +586,7 @@
         public void ProcessSimExecuteTwice()
         {
             string currentDir = Environment.CurrentDirectory;
-            RunProcess process = new GetDirSimProcess("cmd", currentDir, "/c dir");
+            RunProcess process = new GetDirSimProcess("cmd", currentDir, "/c", "dir");
             ProcessExecuteTwice(process);
         }
 
@@ -611,7 +611,7 @@
         public async Task ProcessSimExecuteAsyncTwice()
         {
             string currentDir = Environment.CurrentDirectory;
-            RunProcess process = new GetDirSimProcess("cmd", currentDir, "/c dir");
+            RunProcess process = new GetDirSimProcess("cmd", currentDir, "/c", "dir");
             await ProcessExecuteAsyncTwice(process);
         }
 
@@ -636,7 +636,7 @@
         public async Task ProcessSimExecuteAsyncWithTokenTwice()
         {
             string currentDir = Environment.CurrentDirectory;
-            RunProcess process = new GetDirSimProcess("cmd", currentDir, "/c dir");
+            RunProcess process = new GetDirSimProcess("cmd", currentDir, "/c", "dir");
             await ProcessExecuteAsyncWithTokenTwice(process);
         }
 
@@ -663,7 +663,7 @@
         public void ProcessSimBeginExecuteTwice()
         {
             string currentDir = Environment.CurrentDirectory;
-            RunProcess process = new GetDirSimProcess("cmd", currentDir, "/c dir");
+            RunProcess process = new GetDirSimProcess("cmd", currentDir, "/c", "dir");
             ProcessBeginExecuteTwice(process);
         }
 

@@ -13,7 +13,8 @@ C#](https://devblogs.microsoft.com/premier-developer/extending-the-async-methods
   - [1.2. Task Group](#12-task-group)
   - [1.3. Processes](#13-processes)
     - [1.3.1. Unit Testing](#131-unit-testing)
-    - [1.3.2. Conclusion](#132-conclusion)
+    - [1.3.2. Executable](#132-executable)
+    - [1.3.3. Conclusion](#133-conclusion)
 - [2. Release History](#2-release-history)
   - [2.1. Version 0.3.0](#21-version-030)
   - [2.2. Version 0.2.1](#22-version-021)
@@ -195,7 +196,15 @@ internal class GetDirSimProcess : RunProcess
 }
 ```
 
-#### 1.3.2. Conclusion
+#### 1.3.2. Executable
+
+A wrapper class `Executable` is written to abstract away `RunProcess`, that one
+can build classes based on tool behaviour. Using `RunProcess` simulation for
+testing can be used to test multiple different versions of tools in your test
+suite, without needing the actual tools (only the inputs and outputs copied
+into the test code).
+
+#### 1.3.3. Conclusion
 
 It is then possible to create tools that can automatically detect their
 location, and either execute function (like a GIT tool, that embeds in the class
@@ -207,7 +216,10 @@ how to find the git binary, and then the command lines needed to execute).
 
 Features:
 
-- Process: A wrapper asynchronously handling processes and their output.
+- Process: A wrapper `RunProcess` that asynchronously handles processes and
+  their output (DOTNET-1086)
+- Executable: Create tools around `RunProcess` with the `Executable` class
+  (DOTNET-1088)
 
 ### 2.2. Version 0.2.1
 

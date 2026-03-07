@@ -61,6 +61,41 @@
             Assert.That(cmdLine, Is.EqualTo(joined));
         }
 
+        [Test]
+        public void JoinNullArguments()
+        {
+            string cmdLine = RunProcess.Windows.JoinCommandLine(null);
+            Assert.That(cmdLine, Is.EqualTo(string.Empty));
+        }
+
+        [Test]
+        public void JoinNullArgument()
+        {
+            string cmdLine = RunProcess.Windows.JoinCommandLine(new string[] { null });
+            Assert.That(cmdLine, Is.EqualTo(string.Empty));
+        }
+
+        [Test]
+        public void JoinNullArgumentStart()
+        {
+            string cmdLine = RunProcess.Windows.JoinCommandLine(new[] { null, "a" });
+            Assert.That(cmdLine, Is.EqualTo("a"));
+        }
+
+        [Test]
+        public void JoinNullArgumentEnd()
+        {
+            string cmdLine = RunProcess.Windows.JoinCommandLine(new[] { "b", null });
+            Assert.That(cmdLine, Is.EqualTo("b"));
+        }
+
+        [Test]
+        public void JoinNullArgumentMiddle()
+        {
+            string cmdLine = RunProcess.Windows.JoinCommandLine(new[] { "x", null, "y" });
+            Assert.That(cmdLine, Is.EqualTo("x y"));
+        }
+
         [DllImport("shell32.dll", SetLastError = true)]
         private static extern IntPtr CommandLineToArgvW(
             [MarshalAs(UnmanagedType.LPWStr)] string lpCmdLine,

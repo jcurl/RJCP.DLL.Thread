@@ -9,3 +9,7 @@ BenchmarkDotNet.*
 *.user
 *.userprefs
 *.suo
+/test/stimeout/Release
+/test/stimeout/stimeout/Release
+/test/stimeout/stimeout/x64/Release
+/test/stimeout/x64/Release

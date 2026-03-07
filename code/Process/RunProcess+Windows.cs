@@ -119,9 +119,13 @@
             /// <returns>The resulting string with all arguments joined.</returns>
             public static string JoinCommandLine(params string[] arguments)
             {
+                if (arguments is null) return string.Empty;
+
                 StringBuilder cmdLine = new();
                 StringBuilder escArg = new();
                 foreach (string arg in arguments) {
+                    if (arg is null) continue;
+
                     bool quote = false;
                     foreach (char c in arg) {
                         if (c is ' ' or '\t') {

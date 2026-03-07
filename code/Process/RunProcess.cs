@@ -190,11 +190,11 @@
         /// ]]>
         /// </code>
         /// </example>
-        protected RunProcess(SimAction simulation, string command, string workDir, string arguments)
+        protected RunProcess(SimAction simulation, string command, string workDir, params string[] arguments)
         {
             ThrowHelper.ThrowIfNull(simulation);
 
-            Initialize(command, workDir, arguments);
+            Initialize(command, workDir, Windows.JoinCommandLine(arguments));
             m_Simulation = simulation;
         }
 
