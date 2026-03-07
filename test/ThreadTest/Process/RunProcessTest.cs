@@ -27,7 +27,7 @@
         [Platform(Include = "Win32")]
         public void ProcessRunStatic()
         {
-            RunProcess process = RunProcess.Run("cmd", "/c", "dir");
+            RunProcess process = RunProcess.Run("cmd", new[] { "/c", "dir" });
             Assert.That(process.ExitCode, Is.Zero);
             Assert.That(process.StdOut, Is.Not.Empty);
             Assert.That(process.Command, Is.EqualTo("cmd /c dir"));
@@ -46,7 +46,7 @@
         public void ProcessRunStaticLinux()
         {
             Console.WriteLine("Starting test");
-            RunProcess process = RunProcess.Run("/bin/sh", "-c", "ls -l");
+            RunProcess process = RunProcess.Run("/bin/sh", new[] { "-c", "ls -l" });
             Assert.That(process.ExitCode, Is.Zero);
             Assert.That(process.StdOut, Is.Not.Empty);
             Assert.That(process.Command, Is.EqualTo("/bin/sh -c \"ls -l\""));
@@ -65,7 +65,7 @@
         public void ProcessRunFromStatic()
         {
             string current = Environment.CurrentDirectory;
-            RunProcess process = RunProcess.RunFrom("cmd", current, "/c", "dir");
+            RunProcess process = RunProcess.RunFrom("cmd", current, new[] { "/c", "dir" });
             Assert.That(process.ExitCode, Is.Zero);
             Assert.That(process.StdOut, Is.Not.Empty);
 
@@ -91,7 +91,7 @@
         public void ProcessSimRunFromAsyncResult()
         {
             string current = Environment.CurrentDirectory;
-            RunProcess process = new GetDirSimProcess("cmd", current, "/c", "dir");
+            RunProcess process = new GetDirSimProcess("cmd", current, new[] { "/c", "dir" });
             ProcessRunFromAsyncResult(process);
         }
 
@@ -125,7 +125,7 @@
         public void ProcessSimRunFromAsyncResultTerminate()
         {
             string current = Environment.CurrentDirectory;
-            RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, "10");
+            RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, new[] { "10" });
             ProcessRunFromAsyncResultTerminate(process);
         }
 
@@ -158,7 +158,7 @@
         public void ProcessSimRunFromAsyncResultTerminateBefore()
         {
             string current = Environment.CurrentDirectory;
-            RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, "1");
+            RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, new[] { "1" });
             ProcessRunFromAsyncResultTerminateBefore(process);
         }
 
@@ -190,7 +190,7 @@
         public void ProcessSimRunFromAsyncResultTerminateAfter()
         {
             string current = Environment.CurrentDirectory;
-            RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, "1");
+            RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, new[] { "1" });
             ProcessRunFromAsyncResultTerminateAfter(process);
         }
 
@@ -218,7 +218,7 @@
         public void ProcessSimRunFromAsyncResultTerminateTwice()
         {
             string current = Environment.CurrentDirectory;
-            RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, "10");
+            RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, new[] { "10" });
             ProcessRunFromAsyncResultTerminateTwice(process);
         }
 
@@ -245,7 +245,7 @@
         public void ProcessSimRunFromGetStdOut()
         {
             string current = Environment.CurrentDirectory;
-            RunProcess process = new GetDirSimProcess("cmd", current, "/c", "dir");
+            RunProcess process = new GetDirSimProcess("cmd", current, new[] { "/c", "dir" });
             ProcessRunFromGetStdOut(process);
         }
 
@@ -284,7 +284,7 @@
         public async Task ProcessSimRunFromAsync()
         {
             string current = Environment.CurrentDirectory;
-            RunProcess process = new GetDirSimProcess("cmd", current, "/c", "dir");
+            RunProcess process = new GetDirSimProcess("cmd", current, new[] { "/c", "dir" });
             await ProcessRunFromAsync(process);
         }
 
@@ -316,7 +316,7 @@
         public void ProcessSimRunFromAsyncCancel()
         {
             string current = Environment.CurrentDirectory;
-            RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, "10");
+            RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, new[] { "10" });
             ProcessRunFromAsyncCancel(process);
         }
 
@@ -344,7 +344,7 @@
         public async Task ProcessSimRunFromAsyncCancelTerminateBefore()
         {
             string current = Environment.CurrentDirectory;
-            RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, "10");
+            RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, new[] { "10" });
             await ProcessRunFromAsyncCancelTerminateBefore(process);
         }
 
@@ -372,7 +372,7 @@
         public void ProcessSimRunFromAsyncCancelImmediatelyBefore()
         {
             string current = Environment.CurrentDirectory;
-            RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, "10");
+            RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, new[] { "10" });
             ProcessRunFromAsyncCancelImmediatelyBefore(process);
         }
 
@@ -402,7 +402,7 @@
         public void ProcessSimRunFromAsyncCancelImmediatelyAfter()
         {
             string current = Environment.CurrentDirectory;
-            RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, "10");
+            RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, new[] { "10" });
             ProcessRunFromAsyncCancelImmediatelyAfter(process);
         }
 
@@ -433,7 +433,7 @@
         public void ProcessSimRunFromAsyncCancelImmediatelyParallel()
         {
             string current = Environment.CurrentDirectory;
-            RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, "10");
+            RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, new[] { "10" });
             ProcessRunFromAsyncCancelImmediatelyParallel(process);
         }
 
@@ -462,7 +462,7 @@
         public void ProcessSimRunFromAsyncTerminate()
         {
             string current = Environment.CurrentDirectory;
-            RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, "10");
+            RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, new[] { "10" });
             ProcessRunFromAsyncTerminate(process);
         }
 
@@ -486,7 +486,7 @@
         public async Task ProcessSimRunFromAsyncTerminateBefore()
         {
             string current = Environment.CurrentDirectory;
-            RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, "10");
+            RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, new[] { "10" });
             await ProcessRunFromAsyncTerminateBefore(process);
         }
 
@@ -503,7 +503,7 @@
         {
             string current = Environment.CurrentDirectory;
 
-            RunProcess process = await RunProcess.RunFromAsync("cmd", current, "/c", "dir");
+            RunProcess process = await RunProcess.RunFromAsync("cmd", current, new[] { "/c", "dir" });
             Assert.That(process.ExitCode, Is.Zero);
             Assert.That(process.StdOut, Is.Not.Empty);
 
@@ -541,7 +541,7 @@
         [Platform(Include = "Win32")]
         public async Task ProcessRunAsyncStatic()
         {
-            RunProcess process = await RunProcess.RunAsync("cmd", "/c", "dir");
+            RunProcess process = await RunProcess.RunAsync("cmd", new[] { "/c", "dir" });
             Assert.That(process.ExitCode, Is.Zero);
             Assert.That(process.StdOut, Is.Not.Empty);
 
@@ -586,7 +586,7 @@
         public void ProcessSimExecuteTwice()
         {
             string currentDir = Environment.CurrentDirectory;
-            RunProcess process = new GetDirSimProcess("cmd", currentDir, "/c", "dir");
+            RunProcess process = new GetDirSimProcess("cmd", currentDir, new[] { "/c", "dir" });
             ProcessExecuteTwice(process);
         }
 
@@ -611,7 +611,7 @@
         public async Task ProcessSimExecuteAsyncTwice()
         {
             string currentDir = Environment.CurrentDirectory;
-            RunProcess process = new GetDirSimProcess("cmd", currentDir, "/c", "dir");
+            RunProcess process = new GetDirSimProcess("cmd", currentDir, new[] { "/c", "dir" });
             await ProcessExecuteAsyncTwice(process);
         }
 
@@ -636,7 +636,7 @@
         public async Task ProcessSimExecuteAsyncWithTokenTwice()
         {
             string currentDir = Environment.CurrentDirectory;
-            RunProcess process = new GetDirSimProcess("cmd", currentDir, "/c", "dir");
+            RunProcess process = new GetDirSimProcess("cmd", currentDir, new[] { "/c", "dir" });
             await ProcessExecuteAsyncWithTokenTwice(process);
         }
 
@@ -663,7 +663,7 @@
         public void ProcessSimBeginExecuteTwice()
         {
             string currentDir = Environment.CurrentDirectory;
-            RunProcess process = new GetDirSimProcess("cmd", currentDir, "/c", "dir");
+            RunProcess process = new GetDirSimProcess("cmd", currentDir, new[] { "/c", "dir" });
             ProcessBeginExecuteTwice(process);
         }
 

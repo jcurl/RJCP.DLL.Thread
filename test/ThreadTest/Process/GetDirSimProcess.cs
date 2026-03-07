@@ -4,7 +4,7 @@
 
     internal class GetDirSimProcess : RunProcess
     {
-        private static int GetDirSim(RunProcess process, string command, string arguments, CancellationToken token)
+        private static int GetDirSim(RunProcess process, string command, string[] arguments, CancellationToken token)
         {
             GetDirSimProcess p = (GetDirSimProcess)process;
 
@@ -22,7 +22,7 @@
             return 0;
         }
 
-        public GetDirSimProcess(string command, string workDir, params string[] arguments)
+        public GetDirSimProcess(string command, string workDir, string[] arguments)
             : base(GetDirSim, command, workDir, arguments) { }
     }
 }

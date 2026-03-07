@@ -27,6 +27,25 @@
             m_Process.StartInfo.RedirectStandardInput = false;
         }
 
+#if NETCOREAPP
+        public ProcessWorker(string command, string workingDir, string[] arguments)
+        {
+            m_Process = new Process();
+            m_Process.StartInfo.FileName = command;
+            foreach (string argument in arguments) {
+                m_Process.StartInfo.ArgumentList.Add(argument);
+            }
+            m_Process.StartInfo.ErrorDialog = false;
+            m_Process.StartInfo.UseShellExecute = false;
+            m_Process.StartInfo.CreateNoWindow = true;
+            if (workingDir is not null)
+                m_Process.StartInfo.WorkingDirectory = workingDir;
+            m_Process.StartInfo.RedirectStandardError = true;
+            m_Process.StartInfo.RedirectStandardOutput = true;
+            m_Process.StartInfo.RedirectStandardInput = false;
+        }
+#endif
+
         /// <summary>
         /// Get the exit code of the process.
         /// </summary>

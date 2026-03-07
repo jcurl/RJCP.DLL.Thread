@@ -33,7 +33,7 @@
         /// <param name="arguments">The arguments to give to the command.</param>
         /// <param name="token">The token that can be used to cancel the simulation.</param>
         /// <returns>System.Int32.</returns>
-        protected internal delegate int SimAction(RunProcess sender, string command, string arguments, CancellationToken token);
+        protected internal delegate int SimAction(RunProcess sender, string command, string[] arguments, CancellationToken token);
 
         #region Static Methods for Running Executables
         /// <summary>
@@ -42,7 +42,7 @@
         /// <param name="command">The command to execute.</param>
         /// <param name="arguments">The arguments to give to the command.</param>
         /// <returns>An object to get the results of the command.</returns>
-        public static RunProcess Run(string command, params string[] arguments)
+        public static RunProcess Run(string command, string[] arguments)
         {
             return RunFrom(command, null, arguments);
         }
@@ -54,7 +54,7 @@
         /// <param name="workDir">The directory to execute the command from.</param>
         /// <param name="arguments">The arguments to give to the command.</param>
         /// <returns>An object to get the results of the command.</returns>
-        public static RunProcess RunFrom(string command, string workDir, params string[] arguments)
+        public static RunProcess RunFrom(string command, string workDir, string[] arguments)
         {
             RunProcess process = new(command, workDir, arguments);
             process.Execute();
@@ -67,7 +67,7 @@
         /// <param name="command">The command to execute.</param>
         /// <param name="arguments">The arguments to give to the command.</param>
         /// <returns>An object to get the results of the command.</returns>
-        public static Task<RunProcess> RunAsync(string command, params string[] arguments)
+        public static Task<RunProcess> RunAsync(string command, string[] arguments)
         {
             return RunFromAsync(command, null, arguments);
         }
@@ -91,7 +91,7 @@
         /// <param name="workDir">The directory to execute the command from.</param>
         /// <param name="arguments">The arguments to give to the command.</param>
         /// <returns>An object to get the results of the command.</returns>
-        public static async Task<RunProcess> RunFromAsync(string command, string workDir, params string[] arguments)
+        public static async Task<RunProcess> RunFromAsync(string command, string workDir, string[] arguments)
         {
             RunProcess process = new(command, workDir, arguments);
             await process.ExecuteAsync().ConfigureAwait(false);
@@ -130,7 +130,8 @@
         }
 
         private string m_Command;
-        private string m_Arguments;
+        private string[] m_Arguments;
+        private string m_ArgumentsJoined;
         private readonly SimAction m_Simulation;
         private IProcessWorker m_ProcessWorker;
         private RunningState m_RunningState;
@@ -162,7 +163,7 @@
         /// <![CDATA[
         /// internal class GetDirSimProcess : RunProcess
         /// {
-        ///     private static int GetDirSim(RunProcess process, string command, string arguments, CancellationToken token)
+        ///     private static int GetDirSim(RunProcess process, string command, string[] arguments, CancellationToken token)
         ///     {
         ///         GetDirSimProcess p = (GetDirSimProcess)process;
         ///
@@ -180,7 +181,7 @@
         ///         return 0;
         ///     }
         ///
-        ///     public GetDirSimProcess(string command, string workDir, string arguments)
+        ///     public GetDirSimProcess(string command, string workDir, string[] arguments)
         ///         : base(GetDirSim, command, workDir, arguments) { }
         /// }
         ///
@@ -194,7 +195,7 @@
         {
             ThrowHelper.ThrowIfNull(simulation);
 
-            Initialize(command, workDir, Windows.JoinCommandLine(arguments));
+            Initialize(command, workDir, arguments);
             m_Simulation = simulation;
         }
 
@@ -211,7 +212,7 @@
         /// </remarks>
         public RunProcess(string command, string workDir, string[] arguments)
         {
-            Initialize(command, workDir, Windows.JoinCommandLine(arguments));
+            Initialize(command, workDir, arguments);
         }
 
         /// <summary>
@@ -225,23 +226,44 @@
             Initialize(command, workDir, arguments);
         }
 
-        private void Initialize(string command, string workDir, string arguments)
+        private void Initialize(string command, string workDir, string[] arguments)
         {
             m_Command = command;
             WorkingDirectory = workDir;
             m_Arguments = arguments;
 
             // The command is only used for pretty printing. It isn't actually interpreted.
-            Command = string.Format(CultureInfo.InvariantCulture, "{0} {1}", Windows.JoinCommandLine(m_Command), m_Arguments);
+            Command = string.Format(CultureInfo.InvariantCulture, "{0} {1}",
+                Windows.JoinCommandLine(m_Command),
+                Windows.JoinCommandLine(m_Arguments));
+        }
+
+        private void Initialize(string command, string workDir, string arguments)
+        {
+            m_Command = command;
+            WorkingDirectory = workDir;
+            m_ArgumentsJoined = arguments;
+
+            // The command is only used for pretty printing. It isn't actually interpreted.
+            Command = string.Format(CultureInfo.InvariantCulture, "{0} {1}",
+                Windows.JoinCommandLine(m_Command),
+                m_ArgumentsJoined);
         }
         #endregion
 
         private readonly object m_ProcessLock = new();
 
-        private IProcessWorker GetProcessWorker(string command, string workingDir, string arguments)
+        private IProcessWorker GetProcessWorker()
         {
-            if (m_Simulation is not null) return new ProcessSim(this, m_Simulation, command, arguments);
-            return new ProcessWorker(command, workingDir, arguments);
+            if (m_Simulation is not null) return new ProcessSim(this, m_Simulation, m_Command, m_Arguments);
+#if NETCOREAPP
+            if (m_Arguments is not null) return new ProcessWorker(m_Command, WorkingDirectory, m_Arguments);
+#else
+            // On .NET Framework, the arguments list isn't avaialble, so we need to join them.
+            if (m_Arguments is not null) return new ProcessWorker(m_Command, WorkingDirectory, Windows.JoinCommandLine(m_Arguments));
+#endif
+            if (m_ArgumentsJoined is not null) return new ProcessWorker(m_Command, WorkingDirectory, m_ArgumentsJoined);
+            throw new InvalidOperationException("Initialisation error: Arguments not specified");
         }
 
         /// <summary>
@@ -255,7 +277,7 @@
                     throw new InvalidOperationException(Resources.Messages.Process_RunProcess_ExecuteTwice);
                 m_RunningState = RunningState.Running;
 
-                m_ProcessWorker = GetProcessWorker(m_Command, WorkingDirectory, m_Arguments);
+                m_ProcessWorker = GetProcessWorker();
                 m_ProcessWorker.OutputDataReceived += ProcessWorker_OutputDataReceived;
                 m_ProcessWorker.ErrorDataReceived += ProcessWorker_ErrorDataReceived;
                 m_ProcessWorker.Start();
@@ -283,7 +305,7 @@
                     executeTask = Task.FromResult<object>(null);
                 } else {
                     TaskCompletionSource<object> executeTaskSource = new();
-                    m_ProcessWorker = GetProcessWorker(m_Command, WorkingDirectory, m_Arguments);
+                    m_ProcessWorker = GetProcessWorker();
                     m_ProcessWorker.OutputDataReceived += ProcessWorker_OutputDataReceived;
                     m_ProcessWorker.ErrorDataReceived += ProcessWorker_ErrorDataReceived;
                     m_ProcessWorker.ProcessExitEvent += (s, e) => {
@@ -354,7 +376,7 @@
                     }
                     break;
                 default:
-                    m_ProcessWorker = GetProcessWorker(m_Command, WorkingDirectory, m_Arguments);
+                    m_ProcessWorker = GetProcessWorker();
                     m_ProcessWorker.OutputDataReceived += ProcessWorker_OutputDataReceived;
                     m_ProcessWorker.ErrorDataReceived += ProcessWorker_ErrorDataReceived;
                     m_ProcessWorker.ProcessExitEvent += (s, e) => {
@@ -414,7 +436,7 @@
                     m_ExecuteAsyncResult.Success(true);
                 } else {
                     m_ExecuteAsyncResult = new ProcessAsyncResult(asyncCallback, state, this, "Execute");
-                    m_ProcessWorker = GetProcessWorker(m_Command, WorkingDirectory, m_Arguments);
+                    m_ProcessWorker = GetProcessWorker();
                     m_ProcessWorker.OutputDataReceived += ProcessWorker_OutputDataReceived;
                     m_ProcessWorker.ErrorDataReceived += ProcessWorker_ErrorDataReceived;
                     m_ProcessWorker.ProcessExitEvent += (s, e) => {

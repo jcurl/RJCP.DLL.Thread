@@ -75,7 +75,7 @@
         {
             if (!CheckFileExists(path)) return false;
 
-            RunProcess sleep = await RunProcess.RunAsync(path, "info");
+            RunProcess sleep = await RunProcess.RunAsync(path, new[] { "info" });
             return sleep.ExitCode == 0;
         }
 

@@ -10,10 +10,10 @@
         private readonly RunProcess.SimAction m_Simulation;
         private readonly CancellationTokenSource m_TokenSource;
         private readonly string m_Command;
-        private readonly string m_Arguments;
+        private readonly string[] m_Arguments;
         private Task<int> m_SimTask;
 
-        public ProcessSim(RunProcess sender, RunProcess.SimAction simulation, string command, string arguments)
+        public ProcessSim(RunProcess sender, RunProcess.SimAction simulation, string command, string[] arguments)
         {
             ThrowHelper.ThrowIfNull(simulation);
             ThrowHelper.ThrowIfNull(sender);

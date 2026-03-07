@@ -5,15 +5,15 @@
 
     public class SleepSimProcess : RunProcess
     {
-        private static int SleepSim(RunProcess process, string command, string arguments, CancellationToken token)
+        private static int SleepSim(RunProcess process, string command, string[] arguments, CancellationToken token)
         {
             SleepSimProcess p = (SleepSimProcess)process;
-            if (arguments.Equals("init", StringComparison.InvariantCulture)) {
+            if (arguments[0].Equals("init", StringComparison.InvariantCulture)) {
                 p.LogStdOut("stimeout version 1.0");
                 return 0;
             }
 
-            if (!int.TryParse(arguments, out int _)) {
+            if (!int.TryParse(arguments[0], out int _)) {
                 p.LogStdOut("Invalid time argument");
                 return 1;
             }
