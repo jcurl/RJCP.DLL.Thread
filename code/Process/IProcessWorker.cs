@@ -6,6 +6,8 @@
     {
         int ExitCode { get; }
 
+        int Id { get; }
+
         void Start();
 
         bool Wait(int timeout);

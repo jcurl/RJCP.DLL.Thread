@@ -27,6 +27,8 @@
 
         public int ExitCode { get; private set; }
 
+        public int Id { get { return 0; } }
+
         public void Start()
         {
             m_SimTask = Task.Run(() => {

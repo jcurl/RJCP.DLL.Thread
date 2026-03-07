@@ -29,6 +29,7 @@
         {
             RunProcess process = RunProcess.Run("cmd", new[] { "/c", "dir" });
             Assert.That(process.ExitCode, Is.Zero);
+            Assert.That(process.Id, Is.GreaterThan(0));
             Assert.That(process.StdOut, Is.Not.Empty);
             Assert.That(process.Command, Is.EqualTo("cmd /c dir"));
 
@@ -48,6 +49,7 @@
             Console.WriteLine("Starting test");
             RunProcess process = RunProcess.Run("/bin/sh", new[] { "-c", "ls -l" });
             Assert.That(process.ExitCode, Is.Zero);
+            Assert.That(process.Id, Is.GreaterThan(0));
             Assert.That(process.StdOut, Is.Not.Empty);
             Assert.That(process.Command, Is.EqualTo("/bin/sh -c \"ls -l\""));
 
@@ -67,6 +69,7 @@
             string current = Environment.CurrentDirectory;
             RunProcess process = RunProcess.RunFrom("cmd", current, new[] { "/c", "dir" });
             Assert.That(process.ExitCode, Is.Zero);
+            Assert.That(process.Id, Is.GreaterThan(0));
             Assert.That(process.StdOut, Is.Not.Empty);
 
             // Dump the contents for evaluation later
@@ -85,6 +88,7 @@
             string current = Environment.CurrentDirectory;
             RunProcess process = new("cmd", current, new[] { "/c", "dir" });
             ProcessRunFromAsyncResult(process);
+            Assert.That(process.Id, Is.GreaterThan(0));
         }
 
         [Test]
@@ -93,6 +97,7 @@
             string current = Environment.CurrentDirectory;
             RunProcess process = new GetDirSimProcess("cmd", current, new[] { "/c", "dir" });
             ProcessRunFromAsyncResult(process);
+            Assert.That(process.Id, Is.Zero);
         }
 
         private static void ProcessRunFromAsyncResult(RunProcess process)
@@ -119,6 +124,7 @@
             string current = Environment.CurrentDirectory;
             RunProcess process = new(GetTimeoutBinary(), current, new[] { "10" });
             ProcessRunFromAsyncResultTerminate(process);
+            Assert.That(process.Id, Is.GreaterThan(0));
         }
 
         [Test]
@@ -127,6 +133,7 @@
             string current = Environment.CurrentDirectory;
             RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, new[] { "10" });
             ProcessRunFromAsyncResultTerminate(process);
+            Assert.That(process.Id, Is.Zero);
         }
 
         private static void ProcessRunFromAsyncResultTerminate(RunProcess process)
@@ -175,6 +182,9 @@
 
             process.EndExecute(ar);
             Assert.That(process.ExitCode, Is.EqualTo(-1));
+
+            // The process was terminated before started, so the process wasn't executed.
+            Assert.That(process.Id, Is.Zero);
         }
 
         [Test]
@@ -184,6 +194,7 @@
             string current = Environment.CurrentDirectory;
             RunProcess process = new(GetTimeoutBinary(), current, new[] { "1" });
             ProcessRunFromAsyncResultTerminateAfter(process);
+            Assert.That(process.Id, Is.GreaterThan(0));
         }
 
         [Test]
@@ -192,6 +203,7 @@
             string current = Environment.CurrentDirectory;
             RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, new[] { "1" });
             ProcessRunFromAsyncResultTerminateAfter(process);
+            Assert.That(process.Id, Is.Zero);
         }
 
         private static void ProcessRunFromAsyncResultTerminateAfter(RunProcess process)
@@ -212,6 +224,7 @@
             string current = Environment.CurrentDirectory;
             RunProcess process = new(GetTimeoutBinary(), current, new[] { "10" });
             ProcessRunFromAsyncResultTerminateTwice(process);
+            Assert.That(process.Id, Is.GreaterThan(0));
         }
 
         [Test]
@@ -220,6 +233,7 @@
             string current = Environment.CurrentDirectory;
             RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, new[] { "10" });
             ProcessRunFromAsyncResultTerminateTwice(process);
+            Assert.That(process.Id, Is.Zero);
         }
 
         private static void ProcessRunFromAsyncResultTerminateTwice(RunProcess process)
@@ -239,6 +253,7 @@
             string current = Environment.CurrentDirectory;
             RunProcess process = new("cmd", current, new[] { "/c", "dir" });
             ProcessRunFromGetStdOut(process);
+            Assert.That(process.Id, Is.GreaterThan(0));
         }
 
         [Test]
@@ -247,6 +262,7 @@
             string current = Environment.CurrentDirectory;
             RunProcess process = new GetDirSimProcess("cmd", current, new[] { "/c", "dir" });
             ProcessRunFromGetStdOut(process);
+            Assert.That(process.Id, Is.Zero);
         }
 
         private static void ProcessRunFromGetStdOut(RunProcess process)
@@ -278,6 +294,7 @@
             string current = Environment.CurrentDirectory;
             RunProcess process = new("cmd", current, new[] { "/c", "dir" });
             await ProcessRunFromAsync(process);
+            Assert.That(process.Id, Is.GreaterThan(0));
         }
 
         [Test]
@@ -286,6 +303,7 @@
             string current = Environment.CurrentDirectory;
             RunProcess process = new GetDirSimProcess("cmd", current, new[] { "/c", "dir" });
             await ProcessRunFromAsync(process);
+            Assert.That(process.Id, Is.Zero);
         }
 
         private static async Task ProcessRunFromAsync(RunProcess process)
@@ -310,6 +328,7 @@
             string current = Environment.CurrentDirectory;
             RunProcess process = new(GetTimeoutBinary(), current, new[] { "10" });
             ProcessRunFromAsyncCancel(process);
+            Assert.That(process.Id, Is.GreaterThan(0));
         }
 
         [Test]
@@ -318,6 +337,7 @@
             string current = Environment.CurrentDirectory;
             RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, new[] { "10" });
             ProcessRunFromAsyncCancel(process);
+            Assert.That(process.Id, Is.Zero);
         }
 
         private static void ProcessRunFromAsyncCancel(RunProcess process)
@@ -354,6 +374,9 @@
                 process.Terminate();
                 await process.ExecuteAsync(tokens.Token);
                 Assert.That(process.ExitCode, Is.EqualTo(-1));
+
+                // Terminated before starting, so the PID is zero.
+                Assert.That(process.Id, Is.Zero);
             }
         }
 
@@ -384,6 +407,9 @@
                     process.ExecuteAsync(tokens.Token).Wait();
                 }, Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<TaskCanceledException>());
                 Assert.That(process.ExitCode, Is.EqualTo(-1));
+
+                // It never started, so the PID is zero.
+                Assert.That(process.Id, Is.Zero);
             }
         }
 
@@ -395,6 +421,7 @@
             string current = Environment.CurrentDirectory;
             RunProcess process = new(GetTimeoutBinary(), current, new[] { "10" });
             ProcessRunFromAsyncCancelImmediatelyAfter(process);
+            Assert.That(process.Id, Is.GreaterThan(0));
         }
 
         [Test]
@@ -404,6 +431,7 @@
             string current = Environment.CurrentDirectory;
             RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, new[] { "10" });
             ProcessRunFromAsyncCancelImmediatelyAfter(process);
+            Assert.That(process.Id, Is.Zero);
         }
 
         private static void ProcessRunFromAsyncCancelImmediatelyAfter(RunProcess process)
@@ -446,6 +474,9 @@
                     Task.WaitAll(c, p);
                 }, Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<TaskCanceledException>());
                 Assert.That(process.ExitCode, Is.EqualTo(-1));
+
+                // We don't check the PID, as we don't know if it started or not. The test case contains a race
+                // condition.
             }
         }
 
@@ -456,6 +487,7 @@
             string current = Environment.CurrentDirectory;
             RunProcess process = new(GetTimeoutBinary(), current, new[] { "10" });
             ProcessRunFromAsyncTerminate(process);
+            Assert.That(process.Id, Is.GreaterThan(0));
         }
 
         [Test]
@@ -464,6 +496,7 @@
             string current = Environment.CurrentDirectory;
             RunProcess process = new TimeoutSimProcess(GetTimeoutBinary(), current, new[] { "10" });
             ProcessRunFromAsyncTerminate(process);
+            Assert.That(process.Id, Is.Zero);
         }
 
         private static void ProcessRunFromAsyncTerminate(RunProcess process)
@@ -495,6 +528,9 @@
             process.Terminate();
             await process.ExecuteAsync();
             Assert.That(process.ExitCode, Is.EqualTo(-1));
+
+            // Process was terminated before it started, so there can be no PID.
+            Assert.That(process.Id, Is.Zero);
         }
 
         [Test]
@@ -505,6 +541,7 @@
 
             RunProcess process = await RunProcess.RunFromAsync("cmd", current, new[] { "/c", "dir" });
             Assert.That(process.ExitCode, Is.Zero);
+            Assert.That(process.Id, Is.GreaterThan(0));
             Assert.That(process.StdOut, Is.Not.Empty);
 
             // Dump the contents for evaluation later
@@ -534,6 +571,8 @@
                     // It's not possible to get the exit code here.
                     _ = process.Result.ExitCode;
                 }, Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<TaskCanceledException>());
+
+                Assert.That(process.Id, Is.GreaterThan(0));
             }
         }
 
@@ -543,6 +582,7 @@
         {
             RunProcess process = await RunProcess.RunAsync("cmd", new[] { "/c", "dir" });
             Assert.That(process.ExitCode, Is.Zero);
+            Assert.That(process.Id, Is.GreaterThan(0));
             Assert.That(process.StdOut, Is.Not.Empty);
 
             // Dump the contents for evaluation later
@@ -570,6 +610,8 @@
                     // It's not possible to get the exit code here.
                     _ = process.Result.ExitCode;
                 }, Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<TaskCanceledException>());
+
+                Assert.That(process.Id, Is.GreaterThan(0));
             }
         }
 

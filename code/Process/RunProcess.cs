@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Diagnostics;
     using System.Globalization;
     using System.Threading;
     using System.Threading.Tasks;
@@ -281,6 +282,7 @@
                 m_ProcessWorker.OutputDataReceived += ProcessWorker_OutputDataReceived;
                 m_ProcessWorker.ErrorDataReceived += ProcessWorker_ErrorDataReceived;
                 m_ProcessWorker.Start();
+                Id = m_ProcessWorker.Id;
             }
             m_ProcessWorker.Wait(Timeout.Infinite);
             OnProcessExit(m_ProcessWorker.ExitCode);
@@ -313,6 +315,7 @@
                         executeTaskSource.SetResult(null);
                     };
                     m_ProcessWorker.Start();
+                    Id = m_ProcessWorker.Id;
                     executeTask = executeTaskSource.Task;
                 }
             }
@@ -396,6 +399,7 @@
                         }
                     };
                     m_ProcessWorker.Start();
+                    Id = m_ProcessWorker.Id;
                     executeTask = executeTaskSource.Task;
                     break;
                 }
@@ -444,6 +448,7 @@
                         m_ExecuteAsyncResult.Success(false);
                     };
                     m_ProcessWorker.Start();
+                    Id = m_ProcessWorker.Id;
                 }
                 return m_ExecuteAsyncResult;
             }
@@ -566,6 +571,12 @@
         {
             get { return new ReadOnlyCollection<string>(m_StdErr); }
         }
+
+        /// <summary>
+        /// Gets the process identifier.
+        /// </summary>
+        /// <value>The process identifier.</value>
+        public int Id { get; private set; }
 
         /// <summary>
         /// Gets the exit code.

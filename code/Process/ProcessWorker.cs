@@ -54,7 +54,25 @@
         /// </remarks>
         public int ExitCode { get; private set; }
 
+        private int m_Id;
+
+        /// <summary>
+        /// Gets the process identifier.
+        /// </summary>
+        /// <value>The process identifier.</value>
+        public int Id
+        {
+            get
+            {
+                if (m_Id <= 0) m_Id = m_Process.Id;
+                return m_Id;
+            }
+            set { m_Id = value; }
+        }
+
         private int m_ProcessStarted = 0;
+
+        private readonly ManualResetEvent m_ProcessPidReady = new(false);
 
         /// <summary>
         /// Start the process and monitoring. Raise events as they occur.
@@ -63,6 +81,8 @@
         {
             if (Interlocked.CompareExchange(ref m_ProcessStarted, 1, 0) != 0)
                 throw new InvalidOperationException("Process was already hosted by ProcessWorker.");
+
+            m_ProcessPidReady.Reset();
 
             // Threads are started, but we don't monitor them for errors, except that the tasks abort, and we notify the
             // user as such. If there is an abort, the process may continue to run, we don't kill it. But we no longer
@@ -79,11 +99,23 @@
             _ = MonitorOutputAsync().ContinueWith((t) => {
                 m_ProcessOutputClosed.Set();
             });
+
+            // Wait until the process has started, so there is a PID, before we return.
+            m_ProcessPidReady.WaitOne();
         }
 
         private async Task MonitorProcessAsync()
         {
             m_Process.Start();
+
+            try {
+                Id = m_Process.Id;
+            } catch (Exception) {
+                // Ignore the exception.
+                Id = -1;
+            }
+            m_ProcessPidReady.Set();
+
             await Task.Run(() => {
                 bool processRunning = true;
                 while (processRunning) {
