@@ -56,7 +56,7 @@
                             special = !special;
                         }
 
-                        if (c is ' ' or '\t') {
+                        if (char.IsWhiteSpace(c)) {
                             if (!special) {
                                 if (arg.Length != 0) {
                                     args.Add(arg.ToString());
@@ -119,7 +119,7 @@
             /// <returns>The resulting string with all arguments joined.</returns>
             public static string JoinCommandLine(params string[] arguments)
             {
-                if (arguments is null) return string.Empty;
+                if (arguments is null || arguments.Length == 0) return string.Empty;
 
                 StringBuilder cmdLine = new();
                 StringBuilder escArg = new();

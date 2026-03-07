@@ -234,8 +234,8 @@
 
             // The command is only used for pretty printing. It isn't actually interpreted.
             Command = string.Format(CultureInfo.InvariantCulture, "{0} {1}",
-                Windows.JoinCommandLine(m_Command),
-                Windows.JoinCommandLine(m_Arguments));
+                CommandLine.Join(m_Command),
+                CommandLine.Join(m_Arguments));
         }
 
         private void Initialize(string command, string workDir, string arguments)
@@ -246,7 +246,7 @@
 
             // The command is only used for pretty printing. It isn't actually interpreted.
             Command = string.Format(CultureInfo.InvariantCulture, "{0} {1}",
-                Windows.JoinCommandLine(m_Command),
+                CommandLine.Join(m_Command),
                 m_ArgumentsJoined);
         }
         #endregion
@@ -260,7 +260,7 @@
             if (m_Arguments is not null) return new ProcessWorker(m_Command, WorkingDirectory, m_Arguments);
 #else
             // On .NET Framework, the arguments list isn't avaialble, so we need to join them.
-            if (m_Arguments is not null) return new ProcessWorker(m_Command, WorkingDirectory, Windows.JoinCommandLine(m_Arguments));
+            if (m_Arguments is not null) return new ProcessWorker(m_Command, WorkingDirectory, CommandLine.Join(m_Arguments));
 #endif
             if (m_ArgumentsJoined is not null) return new ProcessWorker(m_Command, WorkingDirectory, m_ArgumentsJoined);
             throw new InvalidOperationException("Initialisation error: Arguments not specified");

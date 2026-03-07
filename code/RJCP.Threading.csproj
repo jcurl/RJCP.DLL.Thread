@@ -62,12 +62,15 @@
     <Compile Include="Concurrency\AsyncSemaphore.cs" />
     <Compile Include="Concurrency\AsyncValue.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Platform.cs" />
     <Compile Include="Process\ConsoleDataEventArgs.cs" />
     <Compile Include="Process\Executable.cs" />
     <Compile Include="Process\IProcessWorker.cs" />
     <Compile Include="Process\ProcessSim.cs" />
     <Compile Include="Process\ProcessWorker.cs" />
     <Compile Include="Process\ProcessExitedEventArgs.cs" />
+    <Compile Include="Process\RunProcess+CommandLine.cs" />
+    <Compile Include="Process\RunProcess+Linux.cs" />
     <Compile Include="Process\RunProcess+Windows.cs" />
     <Compile Include="Process\RunProcess.cs" />
     <Compile Include="Process\RunProcessException.cs" />

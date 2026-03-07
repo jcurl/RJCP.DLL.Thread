@@ -59,6 +59,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Process\ExecutableTest.cs" />
     <Compile Include="Process\GetDirSimProcess.cs" />
+    <Compile Include="Process\RunProcessCmdLineLinuxTest.cs" />
     <Compile Include="Process\RunProcessCmdLineWinTest.cs" />
     <Compile Include="Process\RunProcessTest.cs" />
     <Compile Include="Process\SleepSimProcess.cs" />
