@@ -5,12 +5,18 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
+#if NET10_0_OR_GREATER
+    using Lock = System.Threading.Lock;
+#else
+    using Lock = System.Object;
+#endif
+
     /// <summary>
     /// Maintains a task group, so that all tasks can be tracked when they're complete.
     /// </summary>
     public class TaskGroup : IEnumerable<Task>
     {
-        private readonly object m_GroupLock = new();
+        private readonly Lock m_GroupLock = new();
         private readonly HashSet<Task> m_TaskGroup = new();
         private readonly TaskCompletionSource<int> m_CompleteSource = new();
 

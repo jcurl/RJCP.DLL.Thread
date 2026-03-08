@@ -80,7 +80,7 @@
         {
             get
             {
-                return Thread.VolatileRead(ref m_Set) == IsCompleted;
+                return Volatile.Read(ref m_Set) == IsCompleted;
             }
         }
 

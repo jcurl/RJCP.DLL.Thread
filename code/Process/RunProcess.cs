@@ -9,6 +9,12 @@
     using System.Threading.Tasks;
     using RJCP.IO;
 
+#if NET10_0_OR_GREATER
+    using Lock = System.Threading.Lock;
+#else
+    using Lock = System.Object;
+#endif
+
     /// <summary>
     /// Wrapper class to run a process.
     /// </summary>
@@ -252,7 +258,7 @@
         }
         #endregion
 
-        private readonly object m_ProcessLock = new();
+        private readonly Lock m_ProcessLock = new();
 
         private IProcessWorker GetProcessWorker()
         {
