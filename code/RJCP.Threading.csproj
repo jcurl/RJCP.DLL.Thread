@@ -66,6 +66,7 @@
     <Compile Include="Process\ConsoleDataEventArgs.cs" />
     <Compile Include="Process\Executable.cs" />
     <Compile Include="Process\IProcessWorker.cs" />
+    <Compile Include="Process\ProcessExecEventArgs.cs" />
     <Compile Include="Process\ProcessSim.cs" />
     <Compile Include="Process\ProcessWorker.cs" />
     <Compile Include="Process\ProcessExitedEventArgs.cs" />

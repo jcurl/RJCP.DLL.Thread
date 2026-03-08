@@ -286,6 +286,8 @@
                 m_ProcessWorker = GetProcessWorker();
                 m_ProcessWorker.OutputDataReceived += ProcessWorker_OutputDataReceived;
                 m_ProcessWorker.ErrorDataReceived += ProcessWorker_ErrorDataReceived;
+
+                OnProcessExec();
                 m_ProcessWorker.Start();
                 Id = m_ProcessWorker.Id;
             }
@@ -319,6 +321,8 @@
                         OnProcessExit(e.Result);
                         executeTaskSource.SetResult(null);
                     };
+
+                    OnProcessExec();
                     m_ProcessWorker.Start();
                     Id = m_ProcessWorker.Id;
                     executeTask = executeTaskSource.Task;
@@ -403,6 +407,8 @@
                             break;
                         }
                     };
+
+                    OnProcessExec();
                     m_ProcessWorker.Start();
                     Id = m_ProcessWorker.Id;
                     executeTask = executeTaskSource.Task;
@@ -452,6 +458,8 @@
                         OnProcessExit(e.Result);
                         m_ExecuteAsyncResult.Success(false);
                     };
+
+                    OnProcessExec();
                     m_ProcessWorker.Start();
                     Id = m_ProcessWorker.Id;
                 }
@@ -468,6 +476,28 @@
         public void EndExecute(IAsyncResult result)
         {
             ProcessAsyncResult.End(result, this, "Execute");
+        }
+
+        // Only used for the OnProcessExec to cache splitting of arguments
+        // - m_Arguments is set when the array is given
+        // - m_ArgumentsJoined is set when the string is given.
+        private string[] m_ArgumentsSplit;
+
+        private void OnProcessExec()
+        {
+            if (m_ArgumentsSplit is null) {
+                if (m_Arguments is null) {
+                    m_ArgumentsSplit = CommandLine.Split(m_ArgumentsJoined);
+                } else {
+                    m_ArgumentsSplit = m_Arguments;
+                }
+            }
+
+            try {
+                OnProcessExecEvent(this, new ProcessExecEventArgs(m_Command, m_ArgumentsSplit, WorkingDirectory));
+            } catch {
+                // Ignore errors in the user code for handling the exit.
+            }
         }
 
         private void OnProcessExit(int exitCode)
@@ -492,6 +522,11 @@
         /// Occurs when the process sends error text on the output.
         /// </summary>
         public event EventHandler<ConsoleDataEventArgs> ErrorDataReceived;
+
+        /// <summary>
+        /// Occurs before the process begins execution.
+        /// </summary>
+        public event EventHandler<ProcessExecEventArgs> ProcessExecEvent;
 
         /// <summary>
         /// Occurs when the process is finished.
@@ -551,6 +586,17 @@
         protected virtual void OnErrorDataReceived(object sender, ConsoleDataEventArgs e)
         {
             EventHandler<ConsoleDataEventArgs> handler = ErrorDataReceived;
+            if (handler is not null) handler(sender, e);
+        }
+
+        /// <summary>
+        /// Handles the <see cref="ProcessExecEvent"/> event.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="ProcessExecEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnProcessExecEvent(object sender, ProcessExecEventArgs e)
+        {
+            EventHandler<ProcessExecEventArgs> handler = ProcessExecEvent;
             if (handler is not null) handler(sender, e);
         }
 

@@ -20,6 +20,6 @@
         /// Gets the result code of the process when it exited.
         /// </summary>
         /// <value>The result code of the process when it exited.</value>
-        public int Result { get; private set; }
+        public int Result { get; }
     }
 }

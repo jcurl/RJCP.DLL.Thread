@@ -32,17 +32,29 @@
             }
         }
 
+        public bool RaiseExceptionOnExecEvent { get; set; }
+
         public bool RaiseExceptionOnOutputEvent { get; set; }
 
         public bool RaiseExceptionOnErrorEvent { get; set; }
 
         public bool RaiseExceptionOnExitEvent { get; set; }
 
+        public CheckEvent CheckOnProcessExecEventType { get; set; } = new();
+
         public CheckEvent CheckOnOutputDataReceivedType { get; set; } = new();
 
         public CheckEvent CheckOnErrorDataReceivedType { get; set; } = new();
 
         public CheckEvent CheckOnProcessExitEventType { get; set; } = new();
+
+        protected override void OnProcessExecEvent(object sender, ProcessExecEventArgs e)
+        {
+            CheckOnProcessExecEventType.Update(sender is RunProcess);
+            if (RaiseExceptionOnExecEvent)
+                throw new InvalidOperationException("Raising error");
+            base.OnProcessExecEvent(sender, e);
+        }
 
         protected override void OnOutputDataReceived(object sender, ConsoleDataEventArgs e)
         {
