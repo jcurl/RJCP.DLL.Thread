@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Diagnostics;
     using System.Globalization;
     using System.Threading;
     using System.Threading.Tasks;
@@ -474,7 +473,13 @@
         private void OnProcessExit(int exitCode)
         {
             ExitCode = exitCode;
-            OnProcessExitEvent(this, new ProcessExitedEventArgs(ExitCode));
+            try {
+                OnProcessExitEvent(this, new ProcessExitedEventArgs(ExitCode));
+            } catch {
+                // Ignore errors in the user code for handling the exit. We ignore only the OnProcessExit erros, and not
+                // the OnOutputDataReceived, OnErrorDataReceived as those two methods propagate to the ProcessWorker
+                // which handles the exceptions by no longer raising output.
+            }
             m_ProcessWorker.Dispose();
         }
 
@@ -496,7 +501,7 @@
         private void ProcessWorker_OutputDataReceived(object sender, ConsoleDataEventArgs e)
         {
             if (e.Data is not null) {
-                OnOutputDataReceived(sender, e);
+                OnOutputDataReceived(this, e);
                 if (e.Data is not null) m_StdOut.Add(e.Data);
             }
         }
@@ -524,7 +529,7 @@
         private void ProcessWorker_ErrorDataReceived(object sender, ConsoleDataEventArgs e)
         {
             if (e.Data is not null) {
-                OnErrorDataReceived(sender, e);
+                OnErrorDataReceived(this, e);
                 if (e.Data is not null) m_StdErr.Add(e.Data);
             }
         }

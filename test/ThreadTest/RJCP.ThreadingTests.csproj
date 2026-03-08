@@ -62,6 +62,7 @@
     <Compile Include="Process\RunProcessCmdLineLinuxTest.cs" />
     <Compile Include="Process\RunProcessCmdLineWinTest.cs" />
     <Compile Include="Process\RunProcessTest.cs" />
+    <Compile Include="Process\SleepProcess.cs" />
     <Compile Include="Process\SleepSimProcess.cs" />
     <Compile Include="Process\SleepTool.cs" />
     <Compile Include="Process\SleepToolMock.cs" />

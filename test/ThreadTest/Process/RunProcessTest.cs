@@ -718,5 +718,98 @@
                 _ = process.BeginExecute(null, null);
             }, Throws.TypeOf<InvalidOperationException>());
         }
+
+        [Test]
+        public async Task EventOverrideTypes()
+        {
+            SleepProcess sleep = new(GetTimeoutBinary());
+            await sleep.ExecuteAsync();
+
+            Assert.That(
+                sleep.CheckOnOutputDataReceivedType.Received |
+                sleep.CheckOnErrorDataReceivedType.Received |
+                sleep.CheckOnProcessExitEventType.Received, Is.True);
+
+            using (Assert.EnterMultipleScope()) {
+                if (sleep.CheckOnOutputDataReceivedType.Received)
+                    Assert.That(sleep.CheckOnOutputDataReceivedType.SenderTypeCorrect, Is.True);
+                if (sleep.CheckOnErrorDataReceivedType.Received)
+                    Assert.That(sleep.CheckOnErrorDataReceivedType.SenderTypeCorrect, Is.True);
+                if (sleep.CheckOnProcessExitEventType.Received)
+                    Assert.That(sleep.CheckOnProcessExitEventType.SenderTypeCorrect, Is.True);
+            }
+        }
+
+        [Test]
+        public async Task ExceptionInOutputEvent()
+        {
+            SleepProcess sleep = new(GetTimeoutBinary()) {
+                RaiseExceptionOnOutputEvent = true
+            };
+
+            await sleep.ExecuteAsync();
+
+            Assert.That(
+                sleep.CheckOnOutputDataReceivedType.Received |
+                sleep.CheckOnErrorDataReceivedType.Received |
+                sleep.CheckOnProcessExitEventType.Received, Is.True);
+
+            using (Assert.EnterMultipleScope()) {
+                if (sleep.CheckOnOutputDataReceivedType.Received)
+                    Assert.That(sleep.CheckOnOutputDataReceivedType.SenderTypeCorrect, Is.True);
+                if (sleep.CheckOnErrorDataReceivedType.Received)
+                    Assert.That(sleep.CheckOnErrorDataReceivedType.SenderTypeCorrect, Is.True);
+                if (sleep.CheckOnProcessExitEventType.Received)
+                    Assert.That(sleep.CheckOnProcessExitEventType.SenderTypeCorrect, Is.True);
+            }
+        }
+
+        [Test]
+        public async Task ExceptionInErrorEvent()
+        {
+            SleepProcess sleep = new(GetTimeoutBinary()) {
+                RaiseExceptionOnErrorEvent = true
+            };
+
+            await sleep.ExecuteAsync();
+
+            Assert.That(
+                sleep.CheckOnOutputDataReceivedType.Received |
+                sleep.CheckOnErrorDataReceivedType.Received |
+                sleep.CheckOnProcessExitEventType.Received, Is.True);
+
+            using (Assert.EnterMultipleScope()) {
+                if (sleep.CheckOnOutputDataReceivedType.Received)
+                    Assert.That(sleep.CheckOnOutputDataReceivedType.SenderTypeCorrect, Is.True);
+                if (sleep.CheckOnErrorDataReceivedType.Received)
+                    Assert.That(sleep.CheckOnErrorDataReceivedType.SenderTypeCorrect, Is.True);
+                if (sleep.CheckOnProcessExitEventType.Received)
+                    Assert.That(sleep.CheckOnProcessExitEventType.SenderTypeCorrect, Is.True);
+            }
+        }
+
+        [Test]
+        public async Task ExceptionInExitEvent()
+        {
+            SleepProcess sleep = new(GetTimeoutBinary()) {
+                RaiseExceptionOnExitEvent = true
+            };
+
+            await sleep.ExecuteAsync();
+
+            Assert.That(
+                sleep.CheckOnOutputDataReceivedType.Received |
+                sleep.CheckOnErrorDataReceivedType.Received |
+                sleep.CheckOnProcessExitEventType.Received, Is.True);
+
+            using (Assert.EnterMultipleScope()) {
+                if (sleep.CheckOnOutputDataReceivedType.Received)
+                    Assert.That(sleep.CheckOnOutputDataReceivedType.SenderTypeCorrect, Is.True);
+                if (sleep.CheckOnErrorDataReceivedType.Received)
+                    Assert.That(sleep.CheckOnErrorDataReceivedType.SenderTypeCorrect, Is.True);
+                if (sleep.CheckOnProcessExitEventType.Received)
+                    Assert.That(sleep.CheckOnProcessExitEventType.SenderTypeCorrect, Is.True);
+            }
+        }
     }
 }
