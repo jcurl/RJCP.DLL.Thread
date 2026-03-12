@@ -722,7 +722,7 @@
         [Test]
         public async Task EventOverrideTypes()
         {
-            SleepProcess sleep = new(GetTimeoutBinary());
+            SleepProcess sleep = new(GetTimeoutBinary(), "info");
             await sleep.ExecuteAsync();
 
             using (Assert.EnterMultipleScope()) {
@@ -749,7 +749,7 @@
             bool command = false;
             bool args = false;
 
-            SleepProcess sleep = new(GetTimeoutBinary());
+            SleepProcess sleep = new(GetTimeoutBinary(), "info");
             sleep.ProcessExecEvent += (sender, e) => {
                 command = !string.IsNullOrWhiteSpace(e.Command);
                 args = (e.Arguments is not null) && e.Arguments.Length > 0;
@@ -767,7 +767,7 @@
         [Test]
         public async Task ExceptionInOutputEvent()
         {
-            SleepProcess sleep = new(GetTimeoutBinary()) {
+            SleepProcess sleep = new(GetTimeoutBinary(), "info") {
                 RaiseExceptionOnOutputEvent = true
             };
 
@@ -794,7 +794,7 @@
         [Test]
         public async Task ExceptionInErrorEvent()
         {
-            SleepProcess sleep = new(GetTimeoutBinary()) {
+            SleepProcess sleep = new(GetTimeoutBinary(), "info") {
                 RaiseExceptionOnErrorEvent = true
             };
 
@@ -821,7 +821,7 @@
         [Test]
         public async Task ExceptionInExecEvent()
         {
-            SleepProcess sleep = new(GetTimeoutBinary()) {
+            SleepProcess sleep = new(GetTimeoutBinary(), "info") {
                 RaiseExceptionOnExecEvent = true
             };
 
@@ -848,7 +848,7 @@
         [Test]
         public async Task ExceptionInExitEvent()
         {
-            SleepProcess sleep = new(GetTimeoutBinary()) {
+            SleepProcess sleep = new(GetTimeoutBinary(), "info") {
                 RaiseExceptionOnExitEvent = true
             };
 
@@ -870,6 +870,33 @@
                 if (sleep.CheckOnErrorDataReceivedType.Received)
                     Assert.That(sleep.CheckOnErrorDataReceivedType.SenderTypeCorrect, Is.True);
             }
+        }
+
+        [Test]
+        public async Task NonZeroExitCode()
+        {
+            SleepProcess sleep = new(GetTimeoutBinary());
+            await sleep.ExecuteAsync();
+
+            // No arguments results in an error.
+            Assert.That(sleep.ExitCode, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task NonZeroExitCodeEvent()
+        {
+            int exitCode = -1;
+
+            SleepProcess sleep = new(GetTimeoutBinary());
+            sleep.ProcessExitEvent += (s, e) => {
+                exitCode = e.Result;
+            };
+            await sleep.ExecuteAsync();
+
+            // No arguments results in an error.
+            Assert.That(sleep.ExitCode, Is.EqualTo(1));
+            Assert.That(sleep.OverrideExitCode, Is.EqualTo(1));
+            Assert.That(exitCode, Is.EqualTo(1));
         }
     }
 }

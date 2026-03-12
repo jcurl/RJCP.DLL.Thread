@@ -4,10 +4,8 @@
 
     public class SleepProcess : RunProcess
     {
-        private static readonly string[] InfoArgs = new[] { "info" };
-
-        public SleepProcess(string command)
-            : base(command, null, InfoArgs) { }
+        public SleepProcess(string command, params string[] args)
+            : base(command, null, args) { }
 
         public SleepProcess(string command, int time)
             : base(command, null, new[] { time.ToString() }) { }
@@ -48,6 +46,8 @@
 
         public CheckEvent CheckOnProcessExitEventType { get; set; } = new();
 
+        public int OverrideExitCode { get; set; } = -1;
+
         protected override void OnProcessExecEvent(object sender, ProcessExecEventArgs e)
         {
             CheckOnProcessExecEventType.Update(sender is RunProcess);
@@ -74,6 +74,7 @@
 
         protected override void OnProcessExitEvent(object sender, ProcessExitedEventArgs e)
         {
+            OverrideExitCode = e.Result;
             CheckOnProcessExitEventType.Update(sender is RunProcess);
             if (RaiseExceptionOnExitEvent)
                 throw new InvalidOperationException("Raising error");
