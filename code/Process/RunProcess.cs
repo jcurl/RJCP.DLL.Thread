@@ -144,7 +144,7 @@
         private readonly List<string> m_StdOut = new();
         private readonly List<string> m_StdErr = new();
         private KillCommand m_Killed;
-        private bool m_IsExited;
+        private bool m_ExitCodeAssigned;
         private int m_ExitCode;
 
         /// <summary>
@@ -636,6 +636,22 @@
         public int Id { get; private set; }
 
         /// <summary>
+        /// Gets a value indicating whether this instance has exited.
+        /// </summary>
+        /// <value>
+        /// <see langword="true"/> if this instance has exited and an exit code is assigned; otherwise, <see langword="false"/>.
+        /// </value>
+        /// <remarks>
+        /// The exit code and this flag are set immediately before the
+        /// <see cref="OnProcessExitEvent(object, ProcessExitedEventArgs)"/> and the associated event <see cref="ProcessExitEvent"/>
+        /// is called.
+        /// </remarks>
+        public bool HasExited
+        {
+            get { return Volatile.Read(ref m_ExitCodeAssigned); }
+        }
+
+        /// <summary>
         /// Gets the exit code.
         /// </summary>
         /// <value>The exit code.</value>
@@ -643,13 +659,14 @@
         {
             get
             {
-                if (!m_IsExited)
+                if (!Volatile.Read(ref m_ExitCodeAssigned))
                     throw new InvalidOperationException(Resources.Messages.Process_NotComplete);
+
                 return m_ExitCode;
             }
             private set
             {
-                m_IsExited = true;
+                Volatile.Write(ref m_ExitCodeAssigned, true);
                 m_ExitCode = value;
             }
         }

@@ -28,6 +28,7 @@
         public void ProcessRunStatic()
         {
             RunProcess process = RunProcess.Run("cmd", new[] { "/c", "dir" });
+            Assert.That(process.HasExited, Is.True);
             Assert.That(process.ExitCode, Is.Zero);
             Assert.That(process.Id, Is.GreaterThan(0));
             Assert.That(process.StdOut, Is.Not.Empty);
@@ -48,6 +49,7 @@
         {
             Console.WriteLine("Starting test");
             RunProcess process = RunProcess.Run("/bin/sh", new[] { "-c", "ls -l" });
+            Assert.That(process.HasExited, Is.True);
             Assert.That(process.ExitCode, Is.Zero);
             Assert.That(process.Id, Is.GreaterThan(0));
             Assert.That(process.StdOut, Is.Not.Empty);
@@ -68,6 +70,7 @@
         {
             string current = Environment.CurrentDirectory;
             RunProcess process = RunProcess.RunFrom("cmd", current, new[] { "/c", "dir" });
+            Assert.That(process.HasExited, Is.True);
             Assert.That(process.ExitCode, Is.Zero);
             Assert.That(process.Id, Is.GreaterThan(0));
             Assert.That(process.StdOut, Is.Not.Empty);
@@ -102,9 +105,12 @@
 
         private static void ProcessRunFromAsyncResult(RunProcess process)
         {
+            Assert.That(process.HasExited, Is.False);
+
             IAsyncResult ar = process.BeginExecute(null, null);
             process.EndExecute(ar);
 
+            Assert.That(process.HasExited, Is.True);
             Assert.That(process.ExitCode, Is.Zero);
             Assert.That(process.StdOut, Is.Not.Empty);
 
@@ -138,6 +144,8 @@
 
         private static void ProcessRunFromAsyncResultTerminate(RunProcess process)
         {
+            Assert.That(process.HasExited, Is.False);
+
             IAsyncResult ar = process.BeginExecute(null, null);
             Thread.Sleep(100);
             process.Terminate();
@@ -149,6 +157,7 @@
             } catch (InvalidOperationException) { /* Ignore exception */ }
 
             process.EndExecute(ar);
+            Assert.That(process.HasExited, Is.True);
             Assert.That(process.ExitCode, Is.EqualTo(-1));
         }
 
@@ -171,8 +180,11 @@
 
         private static void ProcessRunFromAsyncResultTerminateBefore(RunProcess process)
         {
+            Assert.That(process.HasExited, Is.False);
+
             process.Terminate();
             IAsyncResult ar = process.BeginExecute(null, null);
+            Assert.That(process.HasExited, Is.True);
 
             // Note that here, we might not get the exit code, as the process may not have immediately exited
             try {
@@ -208,12 +220,15 @@
 
         private static void ProcessRunFromAsyncResultTerminateAfter(RunProcess process)
         {
+            Assert.That(process.HasExited, Is.False);
+
             IAsyncResult ar = process.BeginExecute(null, null);
             Assert.That(() => { _ = process.ExitCode; }, Throws.TypeOf<InvalidOperationException>());
             Thread.Sleep(2000);
             process.Terminate();
 
             process.EndExecute(ar);
+            Assert.That(process.HasExited, Is.True);
             Assert.That(process.ExitCode, Is.Zero);
         }
 
@@ -238,11 +253,14 @@
 
         private static void ProcessRunFromAsyncResultTerminateTwice(RunProcess process)
         {
+            Assert.That(process.HasExited, Is.False);
+
             IAsyncResult ar = process.BeginExecute(null, null);
             Thread.Sleep(100);
             process.Terminate();
             process.Terminate();
             process.EndExecute(ar);
+            Assert.That(process.HasExited, Is.True);
             Assert.That(process.ExitCode, Is.EqualTo(-1));
         }
 
@@ -270,9 +288,12 @@
             int lines = 0;
             process.OutputDataReceived += (s, e) => { lines++; };
 
+            Assert.That(process.HasExited, Is.False);
+
             IAsyncResult ar = process.BeginExecute(null, null);
             process.EndExecute(ar);
 
+            Assert.That(process.HasExited, Is.True);
             Assert.That(process.ExitCode, Is.Zero);
             Assert.That(process.StdOut, Is.Not.Empty);
 
@@ -308,7 +329,10 @@
 
         private static async Task ProcessRunFromAsync(RunProcess process)
         {
+            Assert.That(process.HasExited, Is.False);
             await process.ExecuteAsync();
+
+            Assert.That(process.HasExited, Is.True);
             Assert.That(process.ExitCode, Is.Zero);
             Assert.That(process.StdOut, Is.Not.Empty);
 
@@ -347,6 +371,8 @@
                 Assert.That(() => {
                     Task.WaitAll(process.ExecuteAsync(tokens.Token), t);
                 }, Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<TaskCanceledException>());
+
+                Assert.That(process.HasExited, Is.True);
                 Assert.That(process.ExitCode, Is.EqualTo(-1));
             }
         }
@@ -372,7 +398,11 @@
         {
             using (CancellationTokenSource tokens = new()) {
                 process.Terminate();
+                Assert.That(process.HasExited, Is.False);
+
                 await process.ExecuteAsync(tokens.Token);
+
+                Assert.That(process.HasExited, Is.True);
                 Assert.That(process.ExitCode, Is.EqualTo(-1));
 
                 // Terminated before starting, so the PID is zero.
@@ -402,6 +432,8 @@
         private static void ProcessRunFromAsyncCancelImmediatelyBefore(RunProcess process)
         {
             using (CancellationTokenSource tokens = new()) {
+                Assert.That(process.HasExited, Is.False);
+
                 tokens.Cancel();
                 Assert.That(() => {
                     process.ExecuteAsync(tokens.Token).Wait();
@@ -409,6 +441,7 @@
                 Assert.That(process.ExitCode, Is.EqualTo(-1));
 
                 // It never started, so the PID is zero.
+                Assert.That(process.HasExited, Is.True);
                 Assert.That(process.Id, Is.Zero);
             }
         }
@@ -437,11 +470,14 @@
         private static void ProcessRunFromAsyncCancelImmediatelyAfter(RunProcess process)
         {
             using (CancellationTokenSource tokens = new()) {
+                Assert.That(process.HasExited, Is.False);
                 Task t = process.ExecuteAsync(tokens.Token);
                 tokens.Cancel();
                 Assert.That(() => {
                     t.Wait();
                 }, Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<TaskCanceledException>());
+
+                Assert.That(process.HasExited, Is.True);
                 Assert.That(process.ExitCode, Is.EqualTo(-1));
             }
         }
@@ -468,11 +504,15 @@
         private static void ProcessRunFromAsyncCancelImmediatelyParallel(RunProcess process)
         {
             using (CancellationTokenSource tokens = new()) {
+                Assert.That(process.HasExited, Is.False);
+
                 Task c = Task.Run(() => { tokens.Cancel(); });
                 Task p = process.ExecuteAsync(tokens.Token);
                 Assert.That(() => {
                     Task.WaitAll(c, p);
                 }, Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<TaskCanceledException>());
+
+                Assert.That(process.HasExited, Is.True);
                 Assert.That(process.ExitCode, Is.EqualTo(-1));
 
                 // We don't check the PID, as we don't know if it started or not. The test case contains a race
@@ -501,8 +541,12 @@
 
         private static void ProcessRunFromAsyncTerminate(RunProcess process)
         {
+            Assert.That(process.HasExited, Is.False);
+
             Task t = Task.Delay(100).ContinueWith((_) => { process.Terminate(); });
             Task.WaitAll(process.ExecuteAsync(), t);
+
+            Assert.That(process.HasExited, Is.True);
             Assert.That(process.ExitCode, Is.EqualTo(-1));
         }
 
@@ -526,7 +570,11 @@
         private static async Task ProcessRunFromAsyncTerminateBefore(RunProcess process)
         {
             process.Terminate();
+            Assert.That(process.HasExited, Is.False);
+
             await process.ExecuteAsync();
+
+            Assert.That(process.HasExited, Is.True);
             Assert.That(process.ExitCode, Is.EqualTo(-1));
 
             // Process was terminated before it started, so there can be no PID.
@@ -540,6 +588,7 @@
             string current = Environment.CurrentDirectory;
 
             RunProcess process = await RunProcess.RunFromAsync("cmd", current, new[] { "/c", "dir" });
+            Assert.That(process.HasExited, Is.True);
             Assert.That(process.ExitCode, Is.Zero);
             Assert.That(process.Id, Is.GreaterThan(0));
             Assert.That(process.StdOut, Is.Not.Empty);
@@ -572,7 +621,15 @@
                     _ = process.Result.ExitCode;
                 }, Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<TaskCanceledException>());
 
-                Assert.That(process.Id, Is.GreaterThan(0));
+                Assert.That(() => {
+                    // It's not possible to get if the process has exited.
+                    _ = process.Result.HasExited;
+                }, Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<TaskCanceledException>());
+
+                Assert.That(() => {
+                    // It's not possible to get the process identifier.
+                    _ = process.Result.Id;
+                }, Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<TaskCanceledException>());
             }
         }
 
@@ -581,6 +638,7 @@
         public async Task ProcessRunAsyncStatic()
         {
             RunProcess process = await RunProcess.RunAsync("cmd", new[] { "/c", "dir" });
+            Assert.That(process.HasExited, Is.True);
             Assert.That(process.ExitCode, Is.Zero);
             Assert.That(process.Id, Is.GreaterThan(0));
             Assert.That(process.StdOut, Is.Not.Empty);
@@ -611,7 +669,15 @@
                     _ = process.Result.ExitCode;
                 }, Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<TaskCanceledException>());
 
-                Assert.That(process.Id, Is.GreaterThan(0));
+                Assert.That(() => {
+                    // It's not possible to get if the process has exited.
+                    _ = process.Result.HasExited;
+                }, Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<TaskCanceledException>());
+
+                Assert.That(() => {
+                    // It's not possible to get the process identifier here.
+                    _ = process.Result.Id;
+                }, Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<TaskCanceledException>());
             }
         }
 
