@@ -415,7 +415,7 @@
         /// </remarks>
         protected virtual void ErrorToolNotAvailable()
         {
-            throw new InvalidOperationException(string.Format(Resources.Messages.Executable_ToolNotFound, ToString()));
+            throw new InvalidOperationException(string.Format(Resources.Messages.Executable_ToolNotFound, ToolName));
         }
 
         /// <summary>
