@@ -53,9 +53,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Concurrency\AsyncManualResetEventTest.cs" />
-    <Compile Include="Concurrency\AsyncSemaphoreTest.cs" />
-    <Compile Include="Concurrency\AsyncValueTest.cs" />
+    <Compile Include="Concurrency\AsyncManualResetEventTest.cs" Condition="'$(SignAssembly)' != 'true'" />
+    <Compile Include="Concurrency\AsyncSemaphoreTest.cs" Condition="'$(SignAssembly)' != 'true'" />
+    <Compile Include="Concurrency\AsyncValueTest.cs" Condition="'$(SignAssembly)' != 'true'" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Process\ExecutableTest.cs" />
     <Compile Include="Process\GetDirSimProcess.cs" />

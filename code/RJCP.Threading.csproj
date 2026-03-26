@@ -57,6 +57,10 @@
     <ProjectReference Include="..\..\bufferio\BufferIO\RJCP.IO.Buffer.csproj" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(SignAssembly)' != 'true'">
+    <InternalsVisibleTo Include="RJCP.ThreadingTests" />
+  </ItemGroup>
+
   <ItemGroup>
     <Compile Include="Concurrency\AsyncManualResetEvent.cs" />
     <Compile Include="Concurrency\AsyncSemaphore.cs" />
